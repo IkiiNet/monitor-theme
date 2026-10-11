@@ -2,8 +2,10 @@ import {
 	ArrowDownIcon,
 	ArrowsUpDownIcon,
 	ArrowUpIcon,
+	Bars3Icon,
 	ChartBarSquareIcon,
 	ServerStackIcon,
+	Squares2X2Icon,
 	ViewColumnsIcon,
 } from "@heroicons/react/20/solid";
 import { useQuery } from "@tanstack/react-query";
@@ -15,6 +17,7 @@ import ServerCard from "@/components/ServerCard";
 import ServerCardInline from "@/components/ServerCardInline";
 import ServerOverview from "@/components/ServerOverview";
 import { ServiceTracker } from "@/components/ServiceTracker";
+import { Button } from "@/components/ui/button";
 import { SORT_TYPES } from "@/context/sort-context";
 import { useSort } from "@/hooks/use-sort";
 import { useStatus } from "@/hooks/use-status";
@@ -118,6 +121,7 @@ export default function Servers({
 	const { status } = useStatus();
 	const [showServices, setShowServices] = useState<string>("0");
 	const [inline, setInline] = useState<string>("0");
+	const [columns, setColumns] = useState<string>("1");
 	const hasRestoredScroll = useRef(false);
 	const [currentGroup, setCurrentGroup] = useState<string>("All");
 	const nezhaWsData = lastData;
@@ -190,6 +194,13 @@ export default function Servers({
 		return () => {
 			window.removeEventListener("resize", checkInlineSettings);
 		};
+	}, []);
+
+	useEffect(() => {
+		const savedColumns = localStorage.getItem("columns");
+		if (savedColumns === "1" || savedColumns === "2") {
+			setColumns(savedColumns);
+		}
 	}, []);
 
 	useEffect(() => {
@@ -437,7 +448,9 @@ export default function Servers({
 			>
 				<section className="flex items-center gap-2 w-full overflow-hidden">
 					{hasServices && (
-						<button
+						<Button
+							variant="outline"
+							size="sm"
 							onClick={() => {
 								setShowServices(showServices === "0" ? "1" : "0");
 								localStorage.setItem(
@@ -445,38 +458,47 @@ export default function Servers({
 									showServices === "0" ? "1" : "0",
 								);
 							}}
-							className={cn(
-								"inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer flex-col items-center gap-0 rounded-[50px] bg-blue-100 p-2.5 text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100",
-								{
-									"inset-shadow-black/20 bg-blue-600 text-white dark:bg-blue-100 dark:text-blue-600":
-										showServices === "1",
-								},
-								{
-									"bg-opacity-70 dark:bg-opacity-70": customBackgroundImage,
-								},
-							)}
+							className={cn("rounded-full px-[9px] bg-white dark:bg-black", {
+								"text-blue-600 dark:text-blue-400": showServices === "1",
+								"bg-white/70 dark:bg-black/70": customBackgroundImage,
+							})}
 						>
-							<ChartBarSquareIcon className="size-[13px]" />
-						</button>
+							<ChartBarSquareIcon className="size-4" />
+						</Button>
 					)}
-					<button
+					<Button
+						variant="outline"
+						size="sm"
 						onClick={() => {
 							setInline(inline === "0" ? "1" : "0");
 							localStorage.setItem("inline", inline === "0" ? "1" : "0");
 						}}
-						className={cn(
-							"inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer flex-col items-center gap-0 rounded-[50px] bg-blue-100 p-2.5 text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100",
-							{
-								"inset-shadow-black/20 bg-blue-600 text-white dark:bg-blue-100 dark:text-blue-600":
-									inline === "1",
-							},
-							{
-								"bg-opacity-70 dark:bg-opacity-70": customBackgroundImage,
-							},
-						)}
+						className={cn("rounded-full px-[9px] bg-white dark:bg-black", {
+							"text-blue-600 dark:text-blue-400": inline === "1",
+							"bg-white/70 dark:bg-black/70": customBackgroundImage,
+						})}
 					>
-						<ViewColumnsIcon className="size-[13px]" />
-					</button>
+						<ViewColumnsIcon className="size-4" />
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => {
+							setColumns(columns === "1" ? "2" : "1");
+							localStorage.setItem("columns", columns === "1" ? "2" : "1");
+						}}
+						className={cn("rounded-full px-[9px] bg-white dark:bg-black", {
+							"text-blue-600 dark:text-blue-400": columns === "2",
+							"bg-white/70 dark:bg-black/70": customBackgroundImage,
+						})}
+						title={columns === "2" ? "双栏" : "单栏"}
+					>
+						{columns === "2" ? (
+							<Squares2X2Icon className="size-4" />
+						) : (
+							<Bars3Icon className="size-4" />
+						)}
+					</Button>
 					<GroupSwitch
 						tabs={groupTabs}
 						currentTab={currentGroup}
@@ -559,7 +581,12 @@ export default function Servers({
 						))}
 					</section>
 				) : (
-					<section className="grid grid-cols-1 gap-2 mt-6 server-card-list">
+					<section
+						className={cn("grid gap-2 mt-6 server-card-list", {
+							"grid-cols-1 md:grid-cols-2": columns === "2",
+							"grid-cols-1": columns !== "2",
+						})}
+					>
 						{filteredServers.map((serverInfo) => (
 							<ServerCard
 								key={serverInfo.id}
