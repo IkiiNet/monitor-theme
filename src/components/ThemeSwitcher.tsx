@@ -44,7 +44,7 @@ export function ModeToggle() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="flex flex-col gap-0.5" align="end">
 				<DropdownMenuItem
-					className={cn("rounded-b-[5px] text-xs", {
+					className={cn("text-xs", {
 						"gap-3 bg-muted font-semibold": theme === "light",
 					})}
 					onSelect={(e) => handleSelect(e, "light")}
@@ -53,7 +53,7 @@ export function ModeToggle() {
 					{theme === "light" && <CheckCircleIcon className="size-4" />}
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className={cn("rounded-[5px] text-xs", {
+					className={cn("text-xs", {
 						"gap-3 bg-muted font-semibold": theme === "dark",
 					})}
 					onSelect={(e) => handleSelect(e, "dark")}
@@ -62,7 +62,7 @@ export function ModeToggle() {
 					{theme === "dark" && <CheckCircleIcon className="size-4" />}
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className={cn("rounded-t-[5px] text-xs", {
+					className={cn("text-xs", {
 						"gap-3 bg-muted font-semibold": theme === "system",
 					})}
 					onSelect={(e) => handleSelect(e, "system")}
