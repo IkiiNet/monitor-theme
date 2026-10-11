@@ -1,133 +1,87 @@
 import type { SVGProps } from "react";
 
+// monitor 上报的 os 是整串（如 "Debian GNU/Linux 12 (bookworm)"），
+// nezha 只给短平台名（"debian"）。这里统一改为大小写无关的子串匹配，
+// 两种形式都能正确识别。
+
+const LOGO_RULES: [RegExp, string][] = [
+	[/windows/i, "windows"],
+	[/kali/i, "kali-linux"],
+	[/raspbian|raspberry/i, "raspberry-pi"],
+	[/almalinux|alma ?linux/i, "almalinux"],
+	[/rocky/i, "rocky-linux"],
+	[/centos/i, "centos"],
+	[/ubuntu/i, "ubuntu"],
+	[/debian/i, "debian"],
+	[/deepin/i, "deepin"],
+	[/devuan/i, "devuan"],
+	[/alpine/i, "alpine"],
+	[/manjaro/i, "manjaro"],
+	[/arch/i, "archlinux"],
+	[/fedora/i, "fedora"],
+	[/red ?hat|rhel/i, "redhat"],
+	[/opensuse|suse/i, "opensuse"],
+	[/openwrt|immortalwrt/i, "tux"],
+	[/freebsd/i, "freebsd"],
+	[/openbsd/i, "openbsd"],
+	[/linuxmint|mint/i, "linuxmint"],
+	[/elementary/i, "elementary"],
+	[/gentoo/i, "gentoo"],
+	[/nixos/i, "nixos"],
+	[/coreos/i, "coreos"],
+	[/slackware/i, "slackware"],
+	[/solus/i, "solus"],
+	[/zorin/i, "zorin"],
+	[/mageia/i, "mageia"],
+	[/darwin|mac ?os/i, "apple"],
+];
+
+const NAME_RULES: [RegExp, string][] = [
+	[/windows/i, "Windows"],
+	[/kali/i, "Kali Linux"],
+	[/raspbian|raspberry/i, "Raspbian"],
+	[/almalinux|alma ?linux/i, "AlmaLinux"],
+	[/rocky/i, "Rocky Linux"],
+	[/centos/i, "CentOS"],
+	[/ubuntu/i, "Ubuntu"],
+	[/debian/i, "Debian"],
+	[/deepin/i, "Deepin"],
+	[/devuan/i, "Devuan"],
+	[/alpine/i, "Alpine"],
+	[/manjaro/i, "Manjaro"],
+	[/arch/i, "Arch Linux"],
+	[/fedora/i, "Fedora"],
+	[/red ?hat|rhel/i, "Red Hat"],
+	[/opensuse|suse/i, "openSUSE"],
+	[/openwrt|immortalwrt/i, "OpenWrt"],
+	[/freebsd/i, "FreeBSD"],
+	[/openbsd/i, "OpenBSD"],
+	[/linuxmint|mint/i, "Linux Mint"],
+	[/elementary/i, "elementary"],
+	[/gentoo/i, "Gentoo"],
+	[/nixos/i, "NixOS"],
+	[/coreos/i, "Container Linux"],
+	[/slackware/i, "Slackware"],
+	[/solus/i, "Solus"],
+	[/zorin/i, "Zorin"],
+	[/mageia/i, "Mageia"],
+	[/darwin|mac ?os/i, "macOS"],
+];
+
 export function GetFontLogoClass(platform: string): string {
-	if (
-		[
-			"almalinux",
-			"alpine",
-			"aosc",
-			"apple",
-			"archlinux",
-			"archlabs",
-			"artix",
-			"budgie",
-			"centos",
-			"coreos",
-			"debian",
-			"deepin",
-			"devuan",
-			"docker",
-			"elementary",
-			"fedora",
-			"ferris",
-			"flathub",
-			"freebsd",
-			"gentoo",
-			"gnu-guix",
-			"illumos",
-			"kali-linux",
-			"linuxmint",
-			"mageia",
-			"mandriva",
-			"manjaro",
-			"nixos",
-			"openbsd",
-			"opensuse",
-			"pop-os",
-			"raspberry-pi",
-			"redhat",
-			"rocky-linux",
-			"sabayon",
-			"slackware",
-			"snappy",
-			"solus",
-			"tux",
-			"ubuntu",
-			"void",
-			"zorin",
-		].indexOf(platform) > -1
-	) {
-		return platform;
-	}
-	if (platform === "darwin") {
-		return "apple";
-	}
-	if (["openwrt", "linux", "immortalwrt"].indexOf(platform) > -1) {
-		return "tux";
-	}
-	if (platform === "amazon") {
-		return "redhat";
-	}
-	if (platform === "arch") {
-		return "archlinux";
-	}
-	if (platform.toLowerCase().includes("opensuse")) {
-		return "opensuse";
+	const p = (platform || "").toLowerCase();
+	for (const [re, id] of LOGO_RULES) {
+		if (re.test(p)) return id;
 	}
 	return "tux";
 }
 
 export function GetOsName(platform: string): string {
-	if (
-		[
-			"almalinux",
-			"alpine",
-			"aosc",
-			"apple",
-			"archlinux",
-			"archlabs",
-			"artix",
-			"budgie",
-			"centos",
-			"coreos",
-			"debian",
-			"deepin",
-			"devuan",
-			"docker",
-			"fedora",
-			"ferris",
-			"flathub",
-			"freebsd",
-			"gentoo",
-			"gnu-guix",
-			"illumos",
-			"linuxmint",
-			"mageia",
-			"mandriva",
-			"manjaro",
-			"nixos",
-			"openbsd",
-			"opensuse",
-			"pop-os",
-			"redhat",
-			"sabayon",
-			"slackware",
-			"snappy",
-			"solus",
-			"tux",
-			"ubuntu",
-			"void",
-			"zorin",
-		].indexOf(platform) > -1
-	) {
-		return platform.charAt(0).toUpperCase() + platform.slice(1);
+	const p = (platform || "").toLowerCase();
+	for (const [re, name] of NAME_RULES) {
+		if (re.test(p)) return name;
 	}
-	if (platform === "darwin") {
-		return "macOS";
-	}
-	if (["openwrt", "linux", "immortalwrt"].indexOf(platform) > -1) {
-		return "Linux";
-	}
-	if (platform === "amazon") {
-		return "Redhat";
-	}
-	if (platform === "arch") {
-		return "Archlinux";
-	}
-	if (platform.toLowerCase().includes("opensuse")) {
-		return "Opensuse";
-	}
-	return "Linux";
+	return platform || "Linux";
 }
 
 export function MageMicrosoftWindows(props: SVGProps<SVGSVGElement>) {
