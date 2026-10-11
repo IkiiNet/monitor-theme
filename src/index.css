@@ -430,3 +430,9 @@
 		filter: blur(2px);
 	}
 }
+
+/* 兼容：Tailwind v4 的 .rounded-full 使用极大值 3.40282e38px，
+   个别浏览器解析异常会回退成 0（直角）。这里强制回退为 9999px，确保胶囊圆角。 */
+.rounded-full {
+	border-radius: 9999px;
+}
