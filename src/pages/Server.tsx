@@ -559,7 +559,7 @@ export default function Servers({
 						))}
 					</section>
 				) : (
-					<section className="grid grid-cols-1 gap-2 mt-6 server-card-list">
+					<section className="grid grid-cols-1 gap-2 md:grid-cols-2 mt-6 server-card-list">
 						{filteredServers.map((serverInfo) => (
 							<ServerCard
 								key={serverInfo.id}
