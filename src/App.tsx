@@ -10,9 +10,9 @@ import Footer from "./components/Footer";
 import Header, { RefreshToast } from "./components/Header";
 import { useBackground } from "./hooks/use-background";
 import { useTheme } from "./hooks/use-theme";
+import { useThemeConfig } from "./hooks/use-theme-config";
 import { InjectContext } from "./lib/inject";
 import { fetchSetting } from "./lib/nezha-api";
-import { loadThemeConfig } from "./lib/theme-config";
 import { cn } from "./lib/utils";
 import ErrorPage from "./pages/ErrorPage";
 import Server from "./pages/Server";
@@ -48,18 +48,7 @@ const MainApp: React.FC = () => {
 		loadServerDetail();
 	}, []);
 
-	const [themeCfg, setThemeCfg] = useState<Record<string, unknown>>({});
-	useEffect(() => {
-		loadThemeConfig()
-			.then(setThemeCfg)
-			.catch(() => {});
-	}, []);
-	useEffect(() => {
-		const title = themeCfg.site_title;
-		if (typeof title === "string" && title.trim()) {
-			document.title = title;
-		}
-	}, [themeCfg.site_title]);
+	const themeCfg = useThemeConfig();
 	useEffect(() => {
 		const lang = themeCfg.default_language;
 		if (typeof lang === "string" && lang && !localStorage.getItem("language")) {

@@ -2,11 +2,14 @@
   "name": "NezhaDash",
   "short": "nezha-dash",
   "description": "nezha-dash-v1 移植版（数据源：monitor hub）",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "hamster1963 (ported to monitor)",
   "url": "https://github.com/IkiiNet/monitor-theme",
   "config": [
-    { "key": "site_title", "type": "string", "label": "站点标题", "default": "", "help": "浏览器标签标题，留空使用 monitor 站点名" },
+    { "key": "site_title", "type": "string", "label": "网站标题", "default": "", "help": "主页左上角标题；留空使用 monitor 站点名" },
+    { "key": "site_subtitle", "type": "string", "label": "副标题", "default": "", "help": "标题右侧的小字；留空使用默认" },
+    { "key": "logo_url", "type": "string", "label": "标题前图标", "default": "", "help": "标题左侧图标地址（URL 或主题内路径）；留空用默认图标" },
+    { "key": "favicon_url", "type": "string", "label": "Favicon", "default": "", "help": "浏览器标签图标地址；留空跟随标题前图标" },
     { "key": "notice", "type": "text", "label": "公告", "default": "", "help": "显示在页面顶部，留空不显示；纯文本" },
     {
       "key": "default_language",

@@ -5,7 +5,6 @@ import { fetchSetting } from "@/lib/nezha-api";
 
 const Footer: React.FC = () => {
 	const { t } = useTranslation();
-	const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 
 	const { data: settingData } = useQuery({
 		queryKey: ["setting"],
@@ -31,11 +30,6 @@ const Footer: React.FC = () => {
 						<p>{settingData?.data?.version || ""}</p>
 					</div>
 					<div className="server-footer-theme flex flex-col items-center sm:items-end">
-						<p className="mt-1 text-[13px] font-light tracking-tight text-neutral-600/50 dark:text-neutral-300/50">
-							<kbd className="pointer-events-none mx-1 inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-								{isMac ? <span className="text-xs">⌘</span> : "Ctrl "}K
-							</kbd>
-						</p>
 						<section>
 							{t("footer.themeBy")}
 							<a

@@ -17,6 +17,9 @@ export const THEME_SHORT = "nezha-dash";
 
 export const THEME_CONFIG_FIELDS: ThemeConfigField[] = [
 	{ key: "site_title", type: "string", default: "" },
+	{ key: "site_subtitle", type: "string", default: "" },
+	{ key: "logo_url", type: "string", default: "" },
+	{ key: "favicon_url", type: "string", default: "" },
 	{ key: "notice", type: "text", default: "" },
 	{
 		key: "default_language",

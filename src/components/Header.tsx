@@ -7,6 +7,7 @@ import { ModeToggle } from "@/components/ThemeSwitcher";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBackground } from "@/hooks/use-background";
+import { useThemeConfig } from "@/hooks/use-theme-config";
 import { useWebSocketContext } from "@/hooks/use-websocket-context";
 import { fetchLoginUser, fetchSetting } from "@/lib/nezha-api";
 import { cn } from "@/lib/utils";
@@ -14,7 +15,6 @@ import { cn } from "@/lib/utils";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Loader, LoadingSpinner } from "./loading/Loader";
 import NumericText from "./NumericText";
-import { SearchButton } from "./SearchButton";
 import { Button } from "./ui/button";
 
 function Header() {
@@ -34,13 +34,27 @@ function Header() {
 
 	const onlineCount = connected ? (lastData ? lastData.online || 0 : 0) : "...";
 
-	const siteName = settingData?.data?.config?.site_name;
+	const themeCfg = useThemeConfig();
+
+	const settingSiteName = settingData?.data?.config?.site_name;
+	const siteTitle = themeCfg.site_title;
+	const siteName =
+		typeof siteTitle === "string" && siteTitle.trim()
+			? siteTitle
+			: settingSiteName;
 
 	// @ts-expect-error CustomLogo is a global variable
-	const customLogo = window.CustomLogo || "/apple-touch-icon.png";
+	const globalLogo = window.CustomLogo || "/apple-touch-icon.png";
+	const logoUrl = themeCfg.logo_url;
+	const customLogo =
+		typeof logoUrl === "string" && logoUrl.trim() ? logoUrl : globalLogo;
 
 	// @ts-expect-error CustomDesc is a global variable
-	const customDesc = window.CustomDesc || t("nezha");
+	const globalDesc = window.CustomDesc || t("nezha");
+	const subtitle = themeCfg.site_subtitle;
+	const customDesc =
+		typeof subtitle === "string" && subtitle.trim() ? subtitle : globalDesc;
+	const faviconUrl = themeCfg.favicon_url;
 
 	const customMobileBackgroundImage =
 		window.CustomMobileBackgroundImage !== ""
@@ -56,9 +70,12 @@ function Header() {
 		// @ts-expect-error set link.rel
 		link.rel = "shortcut icon";
 		// @ts-expect-error set link.href
-		link.href = customLogo;
+		link.href =
+			typeof faviconUrl === "string" && faviconUrl.trim()
+				? faviconUrl
+				: customLogo;
 		document.getElementsByTagName("head")[0].appendChild(link);
-	}, [customLogo]);
+	}, [customLogo, faviconUrl]);
 
 	useEffect(() => {
 		document.title = siteName || "哪吒监控 Nezha Monitoring";
@@ -120,7 +137,6 @@ function Header() {
 						<Links />
 						<DashboardLink />
 					</div>
-					<SearchButton />
 					<LanguageSwitcher />
 					<ModeToggle />
 					{(customBackgroundImage ||
