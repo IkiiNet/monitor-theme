@@ -1,20 +1,8 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
-import deTranslation from "./locales/de/translation.json";
 import enTranslation from "./locales/en/translation.json";
-import esTranslation from "./locales/es/translation.json";
-import frTranslation from "./locales/fr/translation.json";
-import glTranslation from "./locales/gl/translation.json";
-import idTranslation from "./locales/id/translation.json";
-import jaTranslation from "./locales/ja/translation.json";
-import ptBRTranslation from "./locales/pt_BR/translation.json";
-import roTranslation from "./locales/ro/translation.json";
-import ruTranslation from "./locales/ru/translation.json";
-import taTranslation from "./locales/ta/translation.json";
-import ukTranslation from "./locales/uk/translation.json";
 import zhCNTranslation from "./locales/zh-CN/translation.json";
-import zhTWTranslation from "./locales/zh-TW/translation.json";
 
 const resources = {
 	"en-US": {
@@ -23,46 +11,10 @@ const resources = {
 	"zh-CN": {
 		translation: zhCNTranslation,
 	},
-	"zh-TW": {
-		translation: zhTWTranslation,
-	},
-	"de-DE": {
-		translation: deTranslation,
-	},
-	"es-ES": {
-		translation: esTranslation,
-	},
-	fr: {
-		translation: frTranslation,
-	},
-	gl: {
-		translation: glTranslation,
-	},
-	id: {
-		translation: idTranslation,
-	},
-	ja: {
-		translation: jaTranslation,
-	},
-	pt_BR: {
-		translation: ptBRTranslation,
-	},
-	ro: {
-		translation: roTranslation,
-	},
-	"ru-RU": {
-		translation: ruTranslation,
-	},
-	"ta-IN": {
-		translation: taTranslation,
-	},
-	uk: {
-		translation: ukTranslation,
-	},
 };
 
 const getStoredLanguage = () => {
-	return localStorage.getItem("language") || "en-US";
+	return localStorage.getItem("language") || "zh-CN";
 };
 
 i18n.use(initReactI18next).init({

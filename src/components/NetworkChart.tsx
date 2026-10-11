@@ -27,15 +27,9 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { useActiveIndicator } from "@/hooks/use-active-indicator";
 import {
-	fetchLoginUser,
 	fetchMonitor,
 	type MonitorPeriod,
 } from "@/lib/nezha-api";
@@ -128,26 +122,6 @@ export function NetworkChart({
 }) {
 	const { t } = useTranslation();
 	const [period, setPeriod] = React.useState<MonitorPeriod>("1d");
-	const { data: userData, isError: isLoginError } = useQuery({
-		queryKey: ["login-user"],
-		queryFn: () => fetchLoginUser(),
-		refetchOnMount: false,
-		refetchOnWindowFocus: true,
-		refetchIntervalInBackground: true,
-		refetchInterval: 1000 * 30,
-		retry: 0,
-	});
-	const isLogin = isLoginError
-		? false
-		: userData
-			? !!userData?.data?.id && !!document.cookie
-			: false;
-
-	React.useEffect(() => {
-		if (!isLogin && period !== "1d") {
-			setPeriod("1d");
-		}
-	}, [isLogin, period]);
 
 	const { data: monitorData, isPlaceholderData } = useQuery({
 		queryKey: ["monitor", server_id, period],
@@ -220,7 +194,6 @@ export function NetworkChart({
 			isPeriodLoading={isPlaceholderData}
 			period={period}
 			onPeriodChange={setPeriod}
-			isLogin={isLogin}
 		/>
 	);
 }
@@ -234,7 +207,6 @@ export const NetworkChartClient = React.memo(function NetworkChart({
 	isPeriodLoading,
 	period,
 	onPeriodChange,
-	isLogin,
 }: {
 	chartDataKey: string[];
 	chartConfig: ChartConfig;
@@ -244,7 +216,6 @@ export const NetworkChartClient = React.memo(function NetworkChart({
 	isPeriodLoading: boolean;
 	period: MonitorPeriod;
 	onPeriodChange: (period: MonitorPeriod) => void;
-	isLogin: boolean;
 }) {
 	const { t } = useTranslation();
 	const [showPeriodLoading, setShowPeriodLoading] = React.useState(false);
@@ -607,44 +578,26 @@ export const NetworkChartClient = React.memo(function NetworkChart({
 								}}
 							/>
 						)}
-						{TIME_RANGE_OPTIONS.map((option, index) => {
-							const isLocked = !isLogin && option.value !== "1d";
-							const optionItem = (
-								<div
-									ref={setItemRef(index)}
-									onClick={() => {
-										if (!isLocked) {
-											if (period !== option.value) {
-												enableIndicatorAnimation();
-											}
-											onPeriodChange(option.value);
-										}
-									}}
-									className={cn(
-										"relative cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium transition-colors duration-300",
-										period === option.value
-											? "text-foreground"
-											: "text-muted-foreground hover:text-foreground",
-										isLocked && "cursor-not-allowed opacity-40 grayscale",
-									)}
-								>
-									<span className="relative z-20">{option.label}</span>
-								</div>
-							);
-
-							if (isLocked) {
-								return (
-									<Tooltip key={option.value}>
-										<TooltipTrigger asChild>{optionItem}</TooltipTrigger>
-										<TooltipContent>
-											{t("monitor.loginRequired", "Please login to view")}
-										</TooltipContent>
-									</Tooltip>
-								);
-							}
-
-							return <div key={option.value}>{optionItem}</div>;
-						})}
+						{TIME_RANGE_OPTIONS.map((option, index) => (
+							<div
+								key={option.value}
+								ref={setItemRef(index)}
+								onClick={() => {
+									if (period !== option.value) {
+										enableIndicatorAnimation();
+									}
+									onPeriodChange(option.value);
+								}}
+								className={cn(
+									"relative cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium transition-colors duration-300",
+									period === option.value
+										? "text-foreground"
+										: "text-muted-foreground hover:text-foreground",
+								)}
+							>
+								<span className="relative z-20">{option.label}</span>
+							</div>
+						))}
 					</div>
 				</TooltipProvider>
 				<div className="flex items-center space-x-2">

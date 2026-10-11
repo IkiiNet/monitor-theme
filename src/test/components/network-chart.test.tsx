@@ -222,7 +222,6 @@ describe("NetworkChartClient", () => {
 				isPeriodLoading={false}
 				period="1d"
 				onPeriodChange={onPeriodChange}
-				isLogin={false}
 			/>,
 		);
 
@@ -267,7 +266,6 @@ describe("NetworkChartClient", () => {
 				isPeriodLoading={true}
 				period="1d"
 				onPeriodChange={onPeriodChange}
-				isLogin={true}
 			/>,
 		);
 

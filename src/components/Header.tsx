@@ -13,8 +13,7 @@ import { fetchLoginUser, fetchSetting } from "@/lib/nezha-api";
 import { cn } from "@/lib/utils";
 
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { Loader, LoadingSpinner } from "./loading/Loader";
-import NumericText from "./NumericText";
+import { LoadingSpinner } from "./loading/Loader";
 import { Button } from "./ui/button";
 
 function Header() {
@@ -30,10 +29,6 @@ function Header() {
 		retry: false,
 	});
 
-	const { lastData, connected } = useWebSocketContext();
-
-	const onlineCount = connected ? (lastData ? lastData.online || 0 : 0) : "...";
-
 	const themeCfg = useThemeConfig();
 
 	const settingSiteName = settingData?.data?.config?.site_name;
@@ -43,18 +38,24 @@ function Header() {
 			? siteTitle
 			: settingSiteName;
 
-	// @ts-expect-error CustomLogo is a global variable
-	const globalLogo = window.CustomLogo || "/apple-touch-icon.png";
+	// logo_url 留空则不显示图标
 	const logoUrl = themeCfg.logo_url;
-	const customLogo =
-		typeof logoUrl === "string" && logoUrl.trim() ? logoUrl : globalLogo;
+	const logoSrc =
+		typeof logoUrl === "string" && logoUrl.trim() ? logoUrl.trim() : "";
+	const hasLogo = logoSrc.length > 0;
 
 	// @ts-expect-error CustomDesc is a global variable
 	const globalDesc = window.CustomDesc || t("nezha");
 	const subtitle = themeCfg.site_subtitle;
 	const customDesc =
 		typeof subtitle === "string" && subtitle.trim() ? subtitle : globalDesc;
-	const faviconUrl = themeCfg.favicon_url;
+
+	// favicon_url 留空则不显示图标
+	const faviconRaw = themeCfg.favicon_url;
+	const faviconUrl =
+		typeof faviconRaw === "string" && faviconRaw.trim()
+			? faviconRaw.trim()
+			: "";
 
 	const customMobileBackgroundImage =
 		window.CustomMobileBackgroundImage !== ""
@@ -62,20 +63,23 @@ function Header() {
 			: undefined;
 
 	useEffect(() => {
-		const link =
-			document.querySelector("link[rel*='icon']") ||
-			document.createElement("link");
+		const existing = document.querySelector("link[rel*='icon']");
+		if (!faviconUrl) {
+			// favicon_url 留空：不显示图标
+			if (existing?.parentNode) {
+				existing.parentNode.removeChild(existing);
+			}
+			return;
+		}
+		const link = existing || document.createElement("link");
 		// @ts-expect-error set link.type
 		link.type = "image/x-icon";
 		// @ts-expect-error set link.rel
 		link.rel = "shortcut icon";
 		// @ts-expect-error set link.href
-		link.href =
-			typeof faviconUrl === "string" && faviconUrl.trim()
-				? faviconUrl
-				: customLogo;
+		link.href = faviconUrl;
 		document.getElementsByTagName("head")[0].appendChild(link);
-	}, [customLogo, faviconUrl]);
+	}, [faviconUrl]);
 
 	useEffect(() => {
 		document.title = siteName || "哪吒监控 Nezha Monitoring";
@@ -110,15 +114,17 @@ function Header() {
 					}}
 					className="cursor-pointer flex items-center sm:text-base text-sm font-medium"
 				>
-					<div className="mr-1 flex flex-row items-center justify-start header-logo">
-						<img
-							width={40}
-							height={40}
-							alt="apple-touch-icon"
-							src={customLogo}
-							className="relative m-0! border-2 border-transparent h-6 w-6 object-cover object-top p-0!"
-						/>
-					</div>
+					{hasLogo && (
+						<div className="mr-1 flex flex-row items-center justify-start header-logo">
+							<img
+								width={40}
+								height={40}
+								alt="logo"
+								src={logoSrc}
+								className="relative m-0! border-2 border-transparent h-6 w-6 object-cover object-top p-0!"
+							/>
+						</div>
+					)}
 					{isLoading ? (
 						<Skeleton className="h-6 w-20 rounded-[5px] bg-muted-foreground/10 animate-none" />
 					) : (
@@ -153,30 +159,6 @@ function Header() {
 							<ImageMinus className="w-4 h-4" />
 						</Button>
 					)}
-					<Button
-						variant="outline"
-						size="sm"
-						className={cn(
-							"hover:bg-white dark:hover:bg-black cursor-default rounded-full flex items-center px-[9px] bg-white dark:bg-black",
-							{
-								"bg-white/70 dark:bg-black/70": customBackgroundImage,
-							},
-						)}
-					>
-						{connected ? (
-							<NumericText value={onlineCount} />
-						) : (
-							<Loader visible={true} />
-						)}
-						<p className="text-muted-foreground">
-							{connected ? t("online") : t("offline")}
-						</p>
-						<span
-							className={cn("h-2 w-2 rounded-full bg-green-500", {
-								"bg-red-500": !connected,
-							})}
-						></span>
-					</Button>
 				</section>
 			</section>
 			<div className="w-full flex justify-between sm:hidden mt-1">

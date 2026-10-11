@@ -28,19 +28,7 @@ export function LanguageSwitcher() {
 
 	const localeItems = [
 		{ name: t("language.zh-CN"), code: "zh-CN" },
-		{ name: t("language.zh-TW"), code: "zh-TW" },
 		{ name: t("language.en-US"), code: "en-US" },
-		{ name: t("language.ru-RU"), code: "ru-RU" },
-		{ name: t("language.es-ES"), code: "es-ES" },
-		{ name: t("language.de-DE"), code: "de-DE" },
-		{ name: t("language.ta-IN"), code: "ta-IN" },
-		{ name: t("language.fr"), code: "fr" },
-		{ name: t("language.gl"), code: "gl" },
-		{ name: t("language.id"), code: "id" },
-		{ name: t("language.ja"), code: "ja" },
-		{ name: t("language.pt_BR"), code: "pt_BR" },
-		{ name: t("language.ro"), code: "ro" },
-		{ name: t("language.uk"), code: "uk" },
 	];
 
 	return (
