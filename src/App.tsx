@@ -12,6 +12,7 @@ import { useBackground } from "./hooks/use-background";
 import { useTheme } from "./hooks/use-theme";
 import { InjectContext } from "./lib/inject";
 import { fetchSetting } from "./lib/nezha-api";
+import { loadThemeConfig } from "./lib/theme-config";
 import { cn } from "./lib/utils";
 import ErrorPage from "./pages/ErrorPage";
 import Server from "./pages/Server";
@@ -46,6 +47,34 @@ const MainApp: React.FC = () => {
 	useEffect(() => {
 		loadServerDetail();
 	}, []);
+
+	const [themeCfg, setThemeCfg] = useState<Record<string, unknown>>({});
+	useEffect(() => {
+		loadThemeConfig()
+			.then(setThemeCfg)
+			.catch(() => {});
+	}, []);
+	useEffect(() => {
+		const title = themeCfg.site_title;
+		if (typeof title === "string" && title.trim()) {
+			document.title = title;
+		}
+	}, [themeCfg.site_title]);
+	useEffect(() => {
+		const lang = themeCfg.default_language;
+		if (typeof lang === "string" && lang && !localStorage.getItem("language")) {
+			i18n.changeLanguage(lang);
+		}
+	}, [themeCfg.default_language, i18n]);
+	useEffect(() => {
+		const next = themeCfg.default_theme;
+		if (
+			(next === "light" || next === "dark" || next === "system") &&
+			!localStorage.getItem("vite-ui-theme")
+		) {
+			setTheme(next);
+		}
+	}, [themeCfg.default_theme, setTheme]);
 
 	useEffect(() => {
 		if (settingData?.data?.config?.custom_code) {
@@ -112,6 +141,11 @@ const MainApp: React.FC = () => {
 			>
 				<main className="flex z-20 min-h-[calc(100vh-calc(var(--spacing)*16))] flex-1 flex-col gap-4 p-4 md:p-10 md:pt-8">
 					<RefreshToast />
+					{typeof themeCfg.notice === "string" && themeCfg.notice.trim() ? (
+						<div className="mx-auto w-full max-w-5xl rounded-lg border border-stone-200 bg-white/70 px-4 py-2 text-center text-sm text-stone-700 dark:border-stone-800 dark:bg-stone-900/60 dark:text-stone-200">
+							{themeCfg.notice}
+						</div>
+					) : null}
 					<Header />
 					<DashCommand />
 					<Routes>

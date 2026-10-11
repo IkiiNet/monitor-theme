@@ -2,7 +2,36 @@
   "name": "NezhaDash",
   "short": "nezha-dash",
   "description": "nezha-dash-v1 移植版（数据源：monitor hub）",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "hamster1963 (ported to monitor)",
-  "url": "https://github.com/IkiiNet/monitor-theme"
+  "url": "https://github.com/IkiiNet/monitor-theme",
+  "config": [
+    { "key": "site_title", "type": "string", "label": "站点标题", "default": "", "help": "浏览器标签标题，留空使用 monitor 站点名" },
+    { "key": "notice", "type": "text", "label": "公告", "default": "", "help": "显示在页面顶部，留空不显示；纯文本" },
+    {
+      "key": "default_language",
+      "type": "select",
+      "label": "默认语言",
+      "default": "zh-CN",
+      "help": "访客未手动切换时的语言",
+      "options": [
+        { "value": "zh-CN", "label": "简体中文" },
+        { "value": "zh-TW", "label": "繁體中文" },
+        { "value": "en", "label": "English" },
+        { "value": "ja", "label": "日本語" }
+      ]
+    },
+    {
+      "key": "default_theme",
+      "type": "select",
+      "label": "默认外观",
+      "default": "system",
+      "help": "访客未手动切换时的外观",
+      "options": [
+        { "value": "system", "label": "跟随系统" },
+        { "value": "light", "label": "浅色" },
+        { "value": "dark", "label": "深色" }
+      ]
+    }
+  ]
 }
