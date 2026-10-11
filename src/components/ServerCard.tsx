@@ -53,11 +53,12 @@ function ServerCard({
 			? window.CustomBackgroundImage
 			: undefined;
 
-	// @ts-expect-error ShowNetTransfer is a global variable
-	const showNetTransfer = window.ShowNetTransfer as boolean;
-
-	// @ts-expect-error FixedTopServerName is a global variable
-	const fixedTopServerName = window.FixedTopServerName as boolean;
+	const globals = window as unknown as {
+		ShowNetTransfer?: boolean;
+		FixedTopServerName?: boolean;
+	};
+	const showNetTransfer = globals.ShowNetTransfer ?? true;
+	const fixedTopServerName = globals.FixedTopServerName ?? false;
 
 	const parsedData = parsePublicNote(public_note);
 
@@ -150,7 +151,7 @@ function ServerCard({
 					)}
 					<div className={"flex w-14 flex-col"}>
 						<p className="text-xs text-muted-foreground">{"CPU"}</p>
-						<div className="flex items-center text-xs font-semibold">
+						<div className="flex items-center text-xs font-semibold whitespace-nowrap">
 							{cpu.toFixed(2)}%
 						</div>
 						<ServerUsageBar value={cpu} />
@@ -159,7 +160,7 @@ function ServerCard({
 						<p className="text-xs text-muted-foreground">
 							{t("serverCard.mem")}
 						</p>
-						<div className="flex items-center text-xs font-semibold">
+						<div className="flex items-center text-xs font-semibold whitespace-nowrap">
 							{mem.toFixed(2)}%
 						</div>
 						<ServerUsageBar value={mem} />
@@ -168,7 +169,7 @@ function ServerCard({
 						<p className="text-xs text-muted-foreground">
 							{t("serverCard.stg")}
 						</p>
-						<div className="flex items-center text-xs font-semibold">
+						<div className="flex items-center text-xs font-semibold whitespace-nowrap">
 							{stg.toFixed(2)}%
 						</div>
 						<ServerUsageBar value={stg} />
@@ -177,7 +178,7 @@ function ServerCard({
 						<p className="text-xs text-muted-foreground">
 							{t("serverCard.upload")}
 						</p>
-						<div className="flex items-center text-xs font-semibold">
+						<div className="flex items-center text-xs font-semibold whitespace-nowrap">
 							{up >= 1024
 								? `${(up / 1024).toFixed(2)}G/s`
 								: up >= 1
@@ -189,7 +190,7 @@ function ServerCard({
 						<p className="text-xs text-muted-foreground">
 							{t("serverCard.download")}
 						</p>
-						<div className="flex items-center text-xs font-semibold">
+						<div className="flex items-center text-xs font-semibold whitespace-nowrap">
 							{down >= 1024
 								? `${(down / 1024).toFixed(2)}G/s`
 								: down >= 1
@@ -204,13 +205,13 @@ function ServerCard({
 							variant="secondary"
 							className="items-center flex-1 justify-center rounded-[8px] text-nowrap text-[11px] border-muted-50 shadow-md shadow-neutral-200/30 dark:shadow-none"
 						>
-							{t("serverCard.upload")}:{formatBytes(net_out_transfer)}
+							{t("serverCard.totalUpload")}:{formatBytes(net_out_transfer)}
 						</Badge>
 						<Badge
 							variant="outline"
 							className="items-center flex-1 justify-center rounded-[8px] text-nowrap text-[11px] shadow-md shadow-neutral-200/30 dark:shadow-none"
 						>
-							{t("serverCard.download")}:{formatBytes(net_in_transfer)}
+							{t("serverCard.totalDownload")}:{formatBytes(net_in_transfer)}
 						</Badge>
 					</section>
 				)}
