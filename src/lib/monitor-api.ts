@@ -105,6 +105,9 @@ export interface MonitorMetricsResponse {
 export interface MonitorPingRow {
 	task_id?: number;
 	ts?: number;
+	latency?: number | null;
+	loss?: number;
+	band?: [number, number];
 	value?: number;
 	avg_delay?: number;
 	packet_loss?: number;
@@ -385,15 +388,16 @@ export const fetchMonitor = async (
 	const byTask = new Map<number, NezhaMonitor>();
 	for (const row of rows) {
 		const taskId = toNumber(row.task_id);
-		const ts = toNumber(row.ts);
-		const delay = toNumber(
-			row.avg_delay ?? row.value ?? (row as { delay?: number }).delay,
-		);
+		// monitor 的 ts 是秒，图表要毫秒
+		const ts = toNumber(row.ts) * 1000;
+		// monitor 的字段是 latency / loss（不是 nezha 的 avg_delay / packet_loss）
+		const latency = row.latency;
+		const loss = toNumber(row.loss);
 		let entry = byTask.get(taskId);
 		if (!entry) {
 			entry = {
 				monitor_id: taskId,
-				monitor_name: probes[String(taskId)] ?? `#${taskId}`,
+				monitor_name: probes[String(taskId)] ?? `探测 ${taskId}`,
 				display_index: taskId,
 				server_id: serverId,
 				server_name: "",
@@ -404,8 +408,8 @@ export const fetchMonitor = async (
 			byTask.set(taskId, entry);
 		}
 		entry.created_at.push(ts);
-		entry.avg_delay.push(delay);
-		(entry.packet_loss as number[]).push(toNumber(row.packet_loss));
+		entry.avg_delay.push(latency == null ? 0 : toNumber(latency));
+		(entry.packet_loss as number[]).push(loss);
 	}
 
 	return { success: true, data: [...byTask.values()] };
