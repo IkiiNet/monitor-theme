@@ -446,7 +446,7 @@ export default function Servers({
 								);
 							}}
 							className={cn(
-								"inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer flex-col items-center gap-0 h-8 rounded-full bg-blue-100 px-4 text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100",
+								"inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer items-center justify-center gap-0 h-8 rounded-full bg-blue-100 px-4 text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100",
 								{
 									"inset-shadow-black/20 bg-blue-600 text-white dark:bg-blue-100 dark:text-blue-600":
 										showServices === "1",
@@ -465,7 +465,7 @@ export default function Servers({
 							localStorage.setItem("inline", inline === "0" ? "1" : "0");
 						}}
 						className={cn(
-							"inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer flex-col items-center gap-0 h-8 rounded-full bg-blue-100 px-4 text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100",
+							"inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer items-center justify-center gap-0 h-8 rounded-full bg-blue-100 px-4 text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100",
 							{
 								"inset-shadow-black/20 bg-blue-600 text-white dark:bg-blue-100 dark:text-blue-600":
 									inline === "1",
