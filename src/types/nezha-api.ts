@@ -12,6 +12,25 @@ export interface NezhaServer {
 	country_code: string;
 	host: NezhaServerHost;
 	state: NezhaServerStatus;
+	// monitor hub 提供的、哪吒没有的字段（用于详情页补全信息）
+	monitor?: NezhaServerMonitor;
+}
+
+export interface NezhaServerMonitor {
+	day_rx?: number;
+	day_tx?: number;
+	month_rx?: number;
+	month_tx?: number;
+	traffic_limit?: number;
+	price?: number;
+	currency?: string;
+	billing_cycle?: string;
+	expires_at?: string | null;
+	expires_in?: number | null;
+	virt?: string;
+	cpu_cores?: number;
+	group?: string;
+	agent_version?: string;
 }
 
 export interface NezhaServerHost {

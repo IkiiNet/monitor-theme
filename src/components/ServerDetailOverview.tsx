@@ -25,6 +25,35 @@ import {
 	TooltipTrigger,
 } from "./ui/tooltip";
 
+const CYCLE_LABEL: Record<string, string> = {
+	monthly: "月",
+	quarterly: "季",
+	semiannual: "半年",
+	yearly: "年",
+	biennial: "两年",
+	triennial: "三年",
+	once: "一次性",
+};
+
+function cycleLabel(cycle: string): string {
+	if (cycle === "once") return "一次性";
+	const m = /^(\d+)m$/.exec(cycle);
+	if (m) return `${m[1]} 个月`;
+	return CYCLE_LABEL[cycle] ?? cycle;
+}
+
+function money(amount: number, currency: string): string {
+	try {
+		return new Intl.NumberFormat("zh-CN", {
+			style: "currency",
+			currency,
+			maximumFractionDigits: 2,
+		}).format(amount);
+	} catch {
+		return `${currency} ${amount.toFixed(2)}`;
+	}
+}
+
 export default function ServerDetailOverview({
 	server_id,
 }: {
@@ -95,6 +124,30 @@ export default function ServerDetailOverview({
 		last_active_time_string,
 		boot_time_string,
 	} = formatNezhaInfo(nezhaWsData.now, server);
+
+	const monitor = server.monitor;
+	const remark = (server.public_note || "").trim();
+	const procs = server.state.process_count || 0;
+
+	const expiresText = (() => {
+		if (monitor?.expires_in !== null && monitor?.expires_in !== undefined) {
+			if (monitor.expires_in < 0) return `已过期 ${Math.abs(monitor.expires_in)} 天`;
+			if (monitor.expires_in === 0) return "今天到期";
+			return `${monitor.expires_in} 天后到期`;
+		}
+		if (monitor?.expires_at) return `${monitor.expires_at} 到期`;
+		return "永久";
+	})();
+	const billingText = [
+		monitor
+			? (monitor.price ?? 0) > 0
+				? `${money(monitor.price ?? 0, monitor.currency ?? "")} / ${cycleLabel(monitor.billing_cycle ?? "")}`
+				: "免费"
+			: "",
+		expiresText,
+	]
+		.filter(Boolean)
+		.join(" · ");
 
 	const customBackgroundImage =
 		(window.CustomBackgroundImage as string) !== ""
@@ -337,6 +390,56 @@ export default function ServerDetailOverview({
 					</Card>
 				) : null}
 			</section>
+			<section className="flex flex-wrap gap-2 mt-1">
+				{(monitor?.day_rx || monitor?.day_tx) && (
+					<Card className="rounded-[10px] bg-transparent border-none shadow-none ring-0">
+						<CardContent className="px-1.5 py-1">
+							<section className="flex flex-col items-start gap-0.5">
+								<p className="text-xs text-muted-foreground">今日流量</p>
+								<div className="text-xs">
+									↓ {formatBytes(monitor?.day_rx ?? 0)} · ↑{" "}
+									{formatBytes(monitor?.day_tx ?? 0)}
+								</div>
+							</section>
+						</CardContent>
+					</Card>
+				)}
+				{monitor && (
+					<Card className="rounded-[10px] bg-transparent border-none shadow-none ring-0">
+						<CardContent className="px-1.5 py-1">
+							<section className="flex flex-col items-start gap-0.5">
+								<p className="text-xs text-muted-foreground">续费</p>
+								<div className="text-xs">{billingText}</div>
+							</section>
+						</CardContent>
+					</Card>
+				)}
+				{procs > 0 && (
+					<Card className="rounded-[10px] bg-transparent border-none shadow-none ring-0">
+						<CardContent className="px-1.5 py-1">
+							<section className="flex flex-col items-start gap-0.5">
+								<p className="text-xs text-muted-foreground">进程数</p>
+								<div className="text-xs">{procs}</div>
+							</section>
+						</CardContent>
+					</Card>
+				)}
+				{monitor?.virt && monitor.virt !== "none" && (
+					<Card className="rounded-[10px] bg-transparent border-none shadow-none ring-0">
+						<CardContent className="px-1.5 py-1">
+							<section className="flex flex-col items-start gap-0.5">
+								<p className="text-xs text-muted-foreground">虚拟化</p>
+								<div className="text-xs">{monitor.virt}</div>
+							</section>
+						</CardContent>
+					</Card>
+				)}
+			</section>
+			{remark && (
+				<p className="mt-3 rounded-md bg-muted px-3 py-2 text-xs whitespace-pre-wrap">
+					{remark}
+				</p>
+			)}
 			<section className="flex flex-wrap gap-2 mt-1">
 				{server?.state.temperatures &&
 					server?.state.temperatures.length > 0 && (

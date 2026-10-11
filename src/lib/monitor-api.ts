@@ -185,6 +185,22 @@ export function mapNode(node: MonitorNode): NezhaServer {
 			temperatures: [],
 			gpu: [],
 		},
+		monitor: {
+			day_rx: node.day_rx ?? 0,
+			day_tx: node.day_tx ?? 0,
+			month_rx: node.month_rx ?? 0,
+			month_tx: node.month_tx ?? 0,
+			traffic_limit: node.traffic_limit ?? 0,
+			price: node.price ?? 0,
+			currency: node.currency ?? "",
+			billing_cycle: node.billing_cycle ?? "",
+			expires_at: (node.expires_at as string | null) ?? null,
+			expires_in: node.expires_in ?? null,
+			virt: node.virt ?? "",
+			cpu_cores: node.cpu_cores ?? 0,
+			group: node.group ?? "",
+			agent_version: node.agent_version ?? "",
+		},
 	};
 }
 
