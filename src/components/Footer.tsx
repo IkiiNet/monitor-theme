@@ -1,11 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import type React from "react";
-import { useTranslation } from "react-i18next";
 import { fetchSetting } from "@/lib/nezha-api";
 
 const Footer: React.FC = () => {
-	const { t } = useTranslation();
-
 	const { data: settingData } = useQuery({
 		queryKey: ["setting"],
 		queryFn: () => fetchSetting(),
@@ -21,32 +18,23 @@ const Footer: React.FC = () => {
 					<div className="flex items-center gap-1">
 						&copy;2020-{new Date().getFullYear()}{" "}
 						<a
-							href={"https://github.com/naiba/nezha"}
+							href={"https://github.com/monitor-probe/monitor"}
 							target="_blank"
 							rel="noopener"
 						>
-							Nezha
+							Monitor
 						</a>
 						<p>{settingData?.data?.version || ""}</p>
 					</div>
 					<div className="server-footer-theme flex flex-col items-center sm:items-end">
 						<section>
-							{t("footer.themeBy")}
 							<a
 								href={"https://github.com/hamster1963/nezha-dash"}
 								target="_blank"
 								rel="noopener"
 							>
-								nezha-dash
+								Nezha-Dash
 							</a>
-							{import.meta.env.VITE_GIT_HASH && (
-								<a
-									href={`https://github.com/hamster1963/nezha-dash-v1/commit/${import.meta.env.VITE_GIT_HASH}`}
-									className="ml-1"
-								>
-									({import.meta.env.VITE_GIT_HASH})
-								</a>
-							)}
 						</section>
 					</div>
 				</section>
