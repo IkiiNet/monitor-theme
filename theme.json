@@ -1,8 +1,8 @@
 {
   "name": "NezhaDash",
-  "short": "default",
+  "short": "nezha-dash",
   "description": "nezha-dash-v1 移植版（数据源：monitor hub）",
   "version": "1.0.0",
   "author": "hamster1963 (ported to monitor)",
-  "url": ""
+  "url": "https://github.com/IkiiNet/monitor-theme"
 }
