@@ -2,8 +2,10 @@ import {
 	ArrowDownIcon,
 	ArrowsUpDownIcon,
 	ArrowUpIcon,
+	Bars3Icon,
 	ChartBarSquareIcon,
 	ServerStackIcon,
+	Squares2X2Icon,
 	ViewColumnsIcon,
 } from "@heroicons/react/20/solid";
 import { useQuery } from "@tanstack/react-query";
@@ -118,6 +120,7 @@ export default function Servers({
 	const { status } = useStatus();
 	const [showServices, setShowServices] = useState<string>("0");
 	const [inline, setInline] = useState<string>("0");
+	const [columns, setColumns] = useState<string>("1");
 	const hasRestoredScroll = useRef(false);
 	const [currentGroup, setCurrentGroup] = useState<string>("All");
 	const nezhaWsData = lastData;
@@ -190,6 +193,13 @@ export default function Servers({
 		return () => {
 			window.removeEventListener("resize", checkInlineSettings);
 		};
+	}, []);
+
+	useEffect(() => {
+		const savedColumns = localStorage.getItem("columns");
+		if (savedColumns === "1" || savedColumns === "2") {
+			setColumns(savedColumns);
+		}
 	}, []);
 
 	useEffect(() => {
@@ -477,6 +487,29 @@ export default function Servers({
 					>
 						<ViewColumnsIcon className="size-[13px]" />
 					</button>
+					<button
+						onClick={() => {
+							setColumns(columns === "1" ? "2" : "1");
+							localStorage.setItem("columns", columns === "1" ? "2" : "1");
+						}}
+						className={cn(
+							"inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer items-center justify-center gap-0 h-8 rounded-full bg-blue-100 px-4 text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100",
+							{
+								"inset-shadow-black/20 bg-blue-600 text-white dark:bg-blue-100 dark:text-blue-600":
+									columns === "1",
+							},
+							{
+								"bg-opacity-70 dark:bg-opacity-70": customBackgroundImage,
+							},
+						)}
+						title={columns === "1" ? "单栏" : "双栏"}
+					>
+						{columns === "1" ? (
+							<Bars3Icon className="size-[13px]" />
+						) : (
+							<Squares2X2Icon className="size-[13px]" />
+						)}
+					</button>
 					<GroupSwitch
 						tabs={groupTabs}
 						currentTab={currentGroup}
@@ -559,7 +592,12 @@ export default function Servers({
 						))}
 					</section>
 				) : (
-					<section className="grid grid-cols-1 gap-2 mt-6 server-card-list">
+					<section
+						className={cn("grid gap-2 mt-6 server-card-list", {
+							"grid-cols-1 md:grid-cols-2": columns === "2",
+							"grid-cols-1": columns !== "2",
+						})}
+					>
 						{filteredServers.map((serverInfo) => (
 							<ServerCard
 								key={serverInfo.id}
