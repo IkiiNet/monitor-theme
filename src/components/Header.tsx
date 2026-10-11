@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ImageMinus } from "lucide-react";
-import { DateTime } from "luxon";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ModeToggle } from "@/components/ThemeSwitcher";
@@ -12,41 +11,11 @@ import { useWebSocketContext } from "@/hooks/use-websocket-context";
 import { fetchLoginUser, fetchSetting } from "@/lib/nezha-api";
 import { cn } from "@/lib/utils";
 
-import AnimateCountClient from "./AnimatedCount";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Loader, LoadingSpinner } from "./loading/Loader";
 import NumericText from "./NumericText";
 import { SearchButton } from "./SearchButton";
 import { Button } from "./ui/button";
-
-interface TimeState {
-	hh: number;
-	mm: number;
-	ss: number;
-}
-
-const useCurrentTime = () => {
-	const [time, setTime] = useState<TimeState>({
-		hh: DateTime.now().setLocale("en-US").hour,
-		mm: DateTime.now().setLocale("en-US").minute,
-		ss: DateTime.now().setLocale("en-US").second,
-	});
-
-	useEffect(() => {
-		const intervalId = setInterval(() => {
-			const now = DateTime.now().setLocale("en-US");
-			setTime({
-				hh: now.hour,
-				mm: now.minute,
-				ss: now.second,
-			});
-		}, 1000);
-
-		return () => clearInterval(intervalId);
-	}, []);
-
-	return time;
-};
 
 function Header() {
 	const { t } = useTranslation();
@@ -198,7 +167,6 @@ function Header() {
 				<DashboardLink />
 				<Links />
 			</div>
-			<Overview />
 		</div>
 	);
 }
@@ -342,35 +310,4 @@ function DashboardLink() {
 	);
 }
 
-function Overview() {
-	const { t } = useTranslation();
-	const time = useCurrentTime();
-	const [mounted, setMounted] = useState(false);
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	return (
-		<section className={"mt-10 flex flex-col md:mt-16 header-timer"}>
-			<p className="text-base font-semibold">👋 {t("overview")}</p>
-			<div className="flex items-center gap-1">
-				<p className="text-sm font-medium opacity-50">{t("whereTheTimeIs")}</p>
-				{mounted ? (
-					<div className="flex items-center font-medium text-sm">
-						<AnimateCountClient count={time.hh} minDigits={2} />
-						<span className="mb-px font-medium text-sm opacity-50">:</span>
-						<AnimateCountClient count={time.mm} minDigits={2} />
-						<span className="mb-px font-medium text-sm opacity-50">:</span>
-						<span className="font-medium text-sm">
-							<AnimateCountClient count={time.ss} minDigits={2} />
-						</span>
-					</div>
-				) : (
-					<Skeleton className="h-[21px] w-16 animate-none rounded-[5px] bg-muted-foreground/10" />
-				)}
-			</div>
-		</section>
-	);
-}
 export default Header;
