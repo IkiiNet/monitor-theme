@@ -1,0 +1,8 @@
+{
+  "name": "NezhaDash",
+  "short": "default",
+  "description": "nezha-dash-v1 移植版（数据源：monitor hub）",
+  "version": "1.0.0",
+  "author": "hamster1963 (ported to monitor)",
+  "url": ""
+}
