@@ -33,7 +33,7 @@ export function ModeToggle() {
 				<Button
 					variant="outline"
 					size="sm"
-					className={cn("rounded-full px-4 bg-white dark:bg-black", {
+					className={cn("h-8 rounded-full px-4 bg-white dark:bg-black", {
 						"bg-white/70 dark:bg-black/70": customBackgroundImage,
 					})}
 				>
