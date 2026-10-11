@@ -53,11 +53,12 @@ function ServerCard({
 			? window.CustomBackgroundImage
 			: undefined;
 
-	// @ts-expect-error ShowNetTransfer is a global variable
-	const showNetTransfer = window.ShowNetTransfer as boolean;
-
-	// @ts-expect-error FixedTopServerName is a global variable
-	const fixedTopServerName = window.FixedTopServerName as boolean;
+	const globals = window as unknown as {
+		ShowNetTransfer?: boolean;
+		FixedTopServerName?: boolean;
+	};
+	const showNetTransfer = globals.ShowNetTransfer ?? true;
+	const fixedTopServerName = globals.FixedTopServerName ?? true;
 
 	const parsedData = parsePublicNote(public_note);
 
