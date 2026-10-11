@@ -330,15 +330,39 @@ const METRIC_FIELD: Partial<Record<MetricType, keyof MonitorMetrics>> = {
 	process_count: "procs",
 };
 
+// 同一节点同一窗口的整份指标只请求一次：详情页各图表（cpu/内存/swap/网络/…）
+// 会并发请求同一 URL，会被 hub 的历史构建并发上限限流（503）。按 (节点, 小时)
+// 去重并短暂缓存，多个图表共享同一次请求，避免触发限流。
+const metricsCache = new Map<
+	string,
+	{ promise: Promise<MonitorMetricsResponse>; at: number }
+>();
+
+function fetchMetricsRaw(
+	serverId: number,
+	hours: number,
+): Promise<MonitorMetricsResponse> {
+	const key = `${serverId}:${hours}`;
+	const hit = metricsCache.get(key);
+	if (hit && Date.now() - hit.at < 20000) {
+		return hit.promise;
+	}
+	const promise = getJson(
+		`/api/nodes/${serverId}/metrics?hours=${hours}&series=metrics`,
+	) as Promise<MonitorMetricsResponse>;
+	// 失败时清掉，避免把一次错误一直挂住
+	promise.catch(() => metricsCache.delete(key));
+	metricsCache.set(key, { promise, at: Date.now() });
+	return promise;
+}
+
 export const fetchServerMetrics = async (
 	serverId: number,
 	metric: MetricType,
 	period?: MetricPeriod,
 ): Promise<ServerMetricsResponse> => {
 	const hours = periodToHours(period);
-	const raw = (await getJson(
-		`/api/nodes/${serverId}/metrics?hours=${hours}&series=metrics`,
-	)) as MonitorMetricsResponse;
+	const raw = await fetchMetricsRaw(serverId, hours);
 	const rows = Array.isArray(raw.metrics) ? raw.metrics : [];
 
 	const field = METRIC_FIELD[metric];
