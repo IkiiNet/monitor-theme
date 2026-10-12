@@ -102,7 +102,8 @@ async function loadThemeConfigRaw(): Promise<Record<string, unknown>> {
 
 	const out: Record<string, unknown> = {};
 	for (const field of THEME_CONFIG_FIELDS) {
-		out[field.key] = Object.hasOwn(saved, field.key)
+		// biome-ignore lint/suspicious/noPrototypeBuiltins: Object.hasOwn requires ES2022, but the build targets Safari 15 (ES2020).
+		out[field.key] = Object.prototype.hasOwnProperty.call(saved, field.key)
 			? saved[field.key]
 			: field.default;
 	}
