@@ -33,7 +33,6 @@ function applyThemeConfigGlobals(cfg: Record<string, unknown>): void {
 	const asStr = (v: unknown): string => (typeof v === "string" ? v : "");
 
 	w.ForceCardInline = asBool(cfg.force_card_inline);
-	w.ForceShowServices = asBool(cfg.force_show_services);
 	w.ForcePeakCutEnabled = asBool(cfg.force_peak_cut);
 	w.ForceSortType = asStr(cfg.force_sort_type);
 	w.ForceSortOrder = asStr(cfg.force_sort_order);

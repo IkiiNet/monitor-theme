@@ -35,7 +35,6 @@ export const THEME_CONFIG_FIELDS: ThemeConfigField[] = [
 	{ key: "notice", type: "text", default: "" },
 	{ key: "card_equal_height", type: "boolean", default: true },
 	{ key: "force_card_inline", type: "boolean", default: false },
-	{ key: "force_show_services", type: "boolean", default: false },
 	{
 		key: "force_sort_type",
 		type: "select",

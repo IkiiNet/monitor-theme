@@ -166,7 +166,11 @@ export function mapNode(node: MonitorNode): NezhaServer {
 			disk_total: node.disk_total ?? m.disk_total ?? 0,
 			swap_total: node.swap_total ?? m.swap_total ?? 0,
 			arch: node.arch ?? "",
-			boot_time: 0,
+			// monitor 无 boot_time，用 最后上报 - 运行时长 反推（秒）
+			boot_time:
+				node.last_seen && m.uptime
+					? node.last_seen - toNumber(m.uptime)
+					: 0,
 			version: node.agent_version ?? "",
 		},
 		state: {

@@ -2,7 +2,7 @@
   "name": "NezhaDash",
   "short": "nezha-dash",
   "description": "nezha-dash V2 移植版",
-  "version": "1.8.1",
+  "version": "1.8.3",
   "author": "hamster1963 (ported to monitor)",
   "url": "https://github.com/IkiiNet/monitor-theme",
   "config": [
@@ -30,7 +30,6 @@
     { "key": "notice", "type": "text", "label": "公告", "default": "", "help": "页面顶部公告；留空不显示" },
     { "key": "card_equal_height", "type": "boolean", "label": "卡片等高", "default": true, "help": "所有服务器卡片保持相同高度" },
     { "key": "force_card_inline", "type": "boolean", "label": "默认紧凑列表", "default": false, "help": "访客首次进入用紧凑列表；仍可切换" },
-    { "key": "force_show_services", "type": "boolean", "label": "默认展开延迟监控", "default": false, "help": "访客首次进入展开延迟监控；仍可收起" },
     {
       "key": "force_sort_type",
       "type": "select",
