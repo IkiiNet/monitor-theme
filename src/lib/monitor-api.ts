@@ -168,9 +168,7 @@ export function mapNode(node: MonitorNode): NezhaServer {
 			arch: node.arch ?? "",
 			// monitor 无 boot_time，用 最后上报 - 运行时长 反推（秒）
 			boot_time:
-				node.last_seen && m.uptime
-					? node.last_seen - toNumber(m.uptime)
-					: 0,
+				node.last_seen && m.uptime ? node.last_seen - toNumber(m.uptime) : 0,
 			version: node.agent_version ?? "",
 		},
 		state: {
@@ -316,7 +314,6 @@ const periodToHours = (period?: MetricPeriod): number => {
 			return 168;
 		case "30d":
 			return 720;
-		case "1d":
 		default:
 			return 24;
 	}

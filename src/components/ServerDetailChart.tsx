@@ -26,10 +26,7 @@ import {
 import { useActiveIndicator } from "@/hooks/use-active-indicator";
 import { useWebSocketContext } from "@/hooks/use-websocket-context";
 import { formatBytes } from "@/lib/format";
-import {
-	fetchServerMetrics,
-	fetchSetting,
-} from "@/lib/nezha-api";
+import { fetchServerMetrics, fetchSetting } from "@/lib/nezha-api";
 import {
 	cn,
 	formatNezhaInfo,

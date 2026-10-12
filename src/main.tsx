@@ -29,7 +29,8 @@ const ReactQueryDevtools = import.meta.env.DEV
 // 把 hub 后台的主题设置写进 nezha-dash 期望的 window 全局（渲染前执行）。
 function applyThemeConfigGlobals(cfg: Record<string, unknown>): void {
 	const w = window as unknown as Record<string, unknown>;
-	const asBool = (v: unknown): boolean => v === true || v === "true" || v === "on";
+	const asBool = (v: unknown): boolean =>
+		v === true || v === "true" || v === "on";
 	const asStr = (v: unknown): string => (typeof v === "string" ? v : "");
 
 	w.ForceCardInline = asBool(cfg.force_card_inline);

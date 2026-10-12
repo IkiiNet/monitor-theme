@@ -102,7 +102,7 @@ async function loadThemeConfigRaw(): Promise<Record<string, unknown>> {
 
 	const out: Record<string, unknown> = {};
 	for (const field of THEME_CONFIG_FIELDS) {
-		out[field.key] = Object.prototype.hasOwnProperty.call(saved, field.key)
+		out[field.key] = Object.hasOwn(saved, field.key)
 			? saved[field.key]
 			: field.default;
 	}

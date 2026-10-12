@@ -29,10 +29,7 @@ import {
 } from "@/components/ui/chart";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useActiveIndicator } from "@/hooks/use-active-indicator";
-import {
-	fetchMonitor,
-	type MonitorPeriod,
-} from "@/lib/nezha-api";
+import { fetchMonitor, type MonitorPeriod } from "@/lib/nezha-api";
 import { cn, formatTime } from "@/lib/utils";
 import type { NezhaMonitor, ServerMonitorChart } from "@/types/nezha-api";
 import NetworkChartLoading from "./NetworkChartLoading";

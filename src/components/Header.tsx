@@ -150,10 +150,10 @@ function Header() {
 							variant="outline"
 							size="sm"
 							onClick={handleBackgroundToggle}
-						className={cn("h-8 rounded-full px-4 bg-white dark:bg-black", {
-							"bg-white/70 dark:bg-black/70": customBackgroundImage,
-							"hidden sm:block": customMobileBackgroundImage,
-						})}
+							className={cn("h-8 rounded-full px-4 bg-white dark:bg-black", {
+								"bg-white/70 dark:bg-black/70": customBackgroundImage,
+								"hidden sm:block": customMobileBackgroundImage,
+							})}
 						>
 							<ImageMinus className="w-4 h-4" />
 						</Button>

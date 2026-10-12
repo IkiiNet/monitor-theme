@@ -131,7 +131,8 @@ export default function ServerDetailOverview({
 
 	const expiresText = (() => {
 		if (monitor?.expires_in !== null && monitor?.expires_in !== undefined) {
-			if (monitor.expires_in < 0) return `已过期 ${Math.abs(monitor.expires_in)} 天`;
+			if (monitor.expires_in < 0)
+				return `已过期 ${Math.abs(monitor.expires_in)} 天`;
 			if (monitor.expires_in === 0) return "今天到期";
 			return `${monitor.expires_in} 天后到期`;
 		}
