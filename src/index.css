@@ -447,108 +447,173 @@
    刷新提示等「玻璃面」。多层景深 = 透射 + 高光边 + 内阴影 + 柔和外投影。
    ========================================================================== */
 
-html.glass-light,
+/* 通透：清澈见底，低模糊、低高光、几乎只有一层薄雾。 */
+html.glass-light {
+	--glass-hi: rgba(255, 255, 255, 0.4);
+	--glass-lo: rgba(255, 255, 255, 0.16);
+	--glass-edge: rgba(255, 255, 255, 0.6);
+	--glass-hairline: rgba(120, 113, 108, 0.1);
+	--glass-sheen: 0.22;
+	--glass-shadow: rgba(41, 37, 36, 0.1);
+	--glass-blur: 7px;
+	--glass-saturate: 135%;
+}
+
+/* 液态玻璃：厚润的流体毛玻璃，高模糊、高饱和、强高光与景深。 */
 html.glass-liquid {
-	--glass-hi: rgba(255, 255, 255, 0.72);
-	--glass-lo: rgba(255, 255, 255, 0.42);
-	--glass-edge: rgba(255, 255, 255, 0.7);
+	--glass-hi: rgba(255, 255, 255, 0.62);
+	--glass-lo: rgba(255, 255, 255, 0.24);
+	--glass-edge: rgba(255, 255, 255, 0.75);
 	--glass-hairline: rgba(120, 113, 108, 0.14);
-	--glass-sheen: 0.45;
-	--glass-shadow: rgba(41, 37, 36, 0.16);
+	--glass-sheen: 0.6;
+	--glass-shadow: rgba(41, 37, 36, 0.2);
+	--glass-blur: 34px;
+	--glass-saturate: 220%;
+}
+
+/* 通透（深色）：只是淡淡一层，几乎透光。 */
+html.glass-light.dark {
+	--glass-hi: rgba(48, 44, 40, 0.42);
+	--glass-lo: rgba(24, 22, 20, 0.22);
+	--glass-edge: rgba(255, 255, 255, 0.1);
+	--glass-hairline: rgba(255, 255, 255, 0.06);
+	--glass-sheen: 0.1;
+	--glass-shadow: rgba(0, 0, 0, 0.4);
+}
+
+/* 液态玻璃（深色）：厚润、强高光。 */
+html.glass-liquid.dark {
+	--glass-hi: rgba(58, 54, 50, 0.68);
+	--glass-lo: rgba(24, 22, 20, 0.4);
+	--glass-edge: rgba(255, 255, 255, 0.18);
+	--glass-hairline: rgba(255, 255, 255, 0.1);
+	--glass-sheen: 0.22;
+	--glass-shadow: rgba(0, 0, 0, 0.6);
+}
+
+/*
+  底色是玻璃能否「看出来」的关键：近白底几乎没有可折射的内容，毛玻璃会显得很平。
+  这里采用 Apple HIG 系统色：中性灰底（systemGray）+ 系统蓝/粉/青三角光斑，
+  再叠一整页竖向渐变给列表区留下细微可折射的变化（列表不铺光斑，避免色带）。
+  系统色（浅色 / 深色）：
+    systemBlue  #007AFF / #0A84FF
+    systemPink  #FF2D55 / #FF375F
+    systemTeal  #30B0C7 / #40C8E0
+    灰阶         #E5E5EA / #1C1C1E（light / dark 基准灰）
+*/
+html.glass-light,
+html.glass-light body {
+	background-color: #e5e5ea;
+}
+
+html.glass-liquid,
+html.glass-liquid body {
+	background-color: #d9d9e0;
 }
 
 html.glass-light.dark,
-html.glass-liquid.dark {
-	--glass-hi: rgba(48, 44, 40, 0.66);
-	--glass-lo: rgba(24, 22, 20, 0.44);
-	--glass-edge: rgba(255, 255, 255, 0.14);
-	--glass-hairline: rgba(255, 255, 255, 0.08);
-	--glass-sheen: 0.18;
-	--glass-shadow: rgba(0, 0, 0, 0.5);
+html.glass-light.dark body {
+	background-color: #1c1c1e;
 }
 
-html.glass-light {
-	--glass-blur: 14px;
-	--glass-saturate: 160%;
+html.glass-liquid.dark,
+html.glass-liquid.dark body {
+	background-color: #161618;
 }
 
-html.glass-liquid {
-	--glass-blur: 28px;
-	--glass-saturate: 210%;
-}
-
-/* 页面底层铺一层极淡的环境色，让玻璃有可折射的景深（有背景图时不明显但无副作用）。 */
 html.glass-light body,
 html.glass-liquid body {
-	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-position: top center;
 }
 
+/* 首屏光斑（systemBlue / systemPink / systemTeal）+ 整页灰底渐变。 */
 html.glass-light body {
 	background-image:
+		radial-gradient(58% 46% at 10% -6%, rgba(0, 122, 255, 0.3), transparent 60%),
 		radial-gradient(
-			60% 50% at 12% -5%,
-			rgba(99, 132, 255, 0.16),
-			transparent 60%
-		),
-		radial-gradient(
-			55% 45% at 100% 0%,
-			rgba(255, 138, 128, 0.14),
+			52% 44% at 100% 0%,
+			rgba(255, 45, 85, 0.24),
 			transparent 62%
 		),
 		radial-gradient(
-			60% 55% at 50% 110%,
-			rgba(64, 196, 180, 0.12),
+			58% 52% at 52% 72%,
+			rgba(48, 176, 199, 0.24),
 			transparent 60%
-		);
+		),
+		linear-gradient(180deg, #dcdce4, #f1f1f5);
+	background-size:
+		100% 100vh,
+		100% 100vh,
+		100% 100vh,
+		100% 100%;
 }
 
 html.glass-liquid body {
 	background-image:
+		radial-gradient(62% 50% at 8% -8%, rgba(0, 122, 255, 0.36), transparent 60%),
+		radial-gradient(56% 48% at 102% 2%, rgba(255, 45, 85, 0.3), transparent 62%),
 		radial-gradient(
-			65% 55% at 8% -8%,
-			rgba(99, 132, 255, 0.24),
+			62% 56% at 46% 74%,
+			rgba(48, 176, 199, 0.3),
 			transparent 60%
 		),
-		radial-gradient(
-			60% 50% at 102% 2%,
-			rgba(255, 138, 128, 0.2),
-			transparent 62%
-		),
-		radial-gradient(
-			65% 60% at 46% 112%,
-			rgba(64, 196, 180, 0.18),
-			transparent 60%
-		);
+		linear-gradient(180deg, #d2d2dc, #e6e6ec);
+	background-size:
+		100% 100vh,
+		100% 100vh,
+		100% 100vh,
+		100% 100%;
 }
 
 html.glass-light.dark body {
 	background-image:
-		radial-gradient(65% 55% at 8% -8%, rgba(56, 89, 189, 0.4), transparent 62%),
 		radial-gradient(
-			60% 50% at 102% 2%,
-			rgba(150, 63, 90, 0.32),
+			62% 50% at 8% -8%,
+			rgba(10, 132, 255, 0.32),
 			transparent 62%
 		),
 		radial-gradient(
-			65% 60% at 46% 112%,
-			rgba(26, 110, 104, 0.34),
+			56% 46% at 102% 2%,
+			rgba(255, 55, 95, 0.26),
 			transparent 62%
-		);
+		),
+		radial-gradient(
+			62% 54% at 46% 74%,
+			rgba(64, 200, 224, 0.26),
+			transparent 62%
+		),
+		linear-gradient(180deg, #212124, #131315);
+	background-size:
+		100% 100vh,
+		100% 100vh,
+		100% 100vh,
+		100% 100%;
 }
 
 html.glass-liquid.dark body {
 	background-image:
-		radial-gradient(70% 60% at 6% -10%, rgba(56, 89, 189, 0.5), transparent 62%),
 		radial-gradient(
-			62% 52% at 104% 0%,
-			rgba(150, 63, 90, 0.42),
+			66% 54% at 6% -10%,
+			rgba(10, 132, 255, 0.42),
 			transparent 62%
 		),
 		radial-gradient(
-			70% 62% at 44% 114%,
-			rgba(26, 110, 104, 0.44),
+			58% 48% at 104% 0%,
+			rgba(255, 55, 95, 0.34),
 			transparent 62%
-		);
+		),
+		radial-gradient(
+			66% 58% at 44% 76%,
+			rgba(64, 200, 224, 0.34),
+			transparent 62%
+		),
+		linear-gradient(180deg, #1d1d20, #0f0f11);
+	background-size:
+		100% 100vh,
+		100% 100vh,
+		100% 100vh,
+		100% 100%;
 }
 
 /* 玻璃面本体：透射 + 多层景深。 */
@@ -569,8 +634,7 @@ html.glass-liquid [role="dialog"] {
 		inset 0 1px 0 0 var(--glass-edge),
 		inset 0 -1px 0 0 rgba(255, 255, 255, 0.06),
 		inset 0 0 0 1px var(--glass-hairline),
-		0 12px 32px -12px var(--glass-shadow),
-		0 2px 10px -4px var(--glass-shadow);
+		0 1px 2px -1px var(--glass-shadow);
 }
 
 /*
@@ -597,15 +661,26 @@ html.glass-liquid [role="dialog"] {
 	}
 }
 
-/* 液态玻璃再叠一层柔和高光与更圆润的观感，强调「原生质感」。 */
+/* 液态玻璃：厚润的流体感——顶缘玻璃高光 + 底部内反射 + 更深的外投影。 */
 html.glass-liquid :is(.glass-surface, .bg-card, .bg-card\/70, .bg-popover),
 html.glass-liquid [role="dialog"] {
+	background-image:
+		radial-gradient(
+			130% 70% at 50% -20%,
+			rgba(255, 255, 255, calc(var(--glass-sheen) + 0.25)),
+			transparent 62%
+		),
+		radial-gradient(
+			120% 90% at 18% -10%,
+			rgba(255, 255, 255, var(--glass-sheen)),
+			transparent 58%
+		),
+		linear-gradient(145deg, var(--glass-hi), var(--glass-lo));
 	box-shadow:
-		inset 0 1px 1px 0 var(--glass-edge),
-		inset 0 -6px 18px -10px rgba(255, 255, 255, 0.35),
+		inset 0 1.5px 1px 0 var(--glass-edge),
+		inset 0 -10px 24px -12px rgba(255, 255, 255, 0.45),
 		inset 0 0 0 1px var(--glass-hairline),
-		0 20px 44px -18px var(--glass-shadow),
-		0 4px 14px -6px var(--glass-shadow);
+		0 2px 4px -2px var(--glass-shadow);
 }
 
 /* 主内容外壳透明，让环境色透上来（有背景图时本就不透明，无影响）。 */

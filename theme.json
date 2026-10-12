@@ -2,7 +2,7 @@
 	"name": "NezhaDash",
 	"short": "nezha-dash",
 	"description": "nezha-dash V2 移植版",
-	"version": "1.9.0",
+	"version": "1.9.1",
 	"author": "hamster1963 (ported to monitor)",
 	"url": "https://github.com/IkiiNet/monitor-theme",
 	"config": [
