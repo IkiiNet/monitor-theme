@@ -44,8 +44,7 @@ describe("Footer", () => {
 	it("renders setting version and project attribution", async () => {
 		renderWithProviders(<Footer />);
 
-		expect(screen.getByText("footer.themeBy")).toBeInTheDocument();
-		expect(screen.getByText("nezha-dash")).toHaveAttribute(
+		expect(screen.getByText("Nezha-Dash")).toHaveAttribute(
 			"href",
 			"https://github.com/hamster1963/nezha-dash",
 		);

@@ -208,7 +208,7 @@ describe("NetworkChart", () => {
 });
 
 describe("NetworkChartClient", () => {
-	it("locks longer periods for anonymous users and manages chart selection state", async () => {
+	it("does not lock longer periods for anonymous users and manages chart selection state", async () => {
 		const user = userEvent.setup();
 		const onPeriodChange = vi.fn();
 
@@ -229,7 +229,7 @@ describe("NetworkChartClient", () => {
 		expect(screen.getByText("2 monitor.monitorCount")).toBeInTheDocument();
 
 		await user.click(screen.getByText("monitor.period7d"));
-		expect(onPeriodChange).not.toHaveBeenCalled();
+		expect(onPeriodChange).toHaveBeenCalledWith("7d");
 
 		await user.click(screen.getByText("Alpha"));
 		expect(

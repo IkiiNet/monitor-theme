@@ -12,7 +12,6 @@ import { useSort } from "@/hooks/use-sort";
 import { useStatus } from "@/hooks/use-status";
 import { useTooltip } from "@/hooks/use-tooltip";
 import { useWebSocketContext } from "@/hooks/use-websocket-context";
-import { createServer } from "@/test/fixtures";
 
 class FakeWebSocket {
 	static readonly CONNECTING = 0;
@@ -249,8 +248,13 @@ describe("WebSocketProvider", () => {
 
 	function websocketPayload(serverName: string) {
 		return JSON.stringify({
-			now: Date.parse("2025-01-01T00:00:20.000Z"),
-			servers: [createServer({ name: serverName })],
+			nodes: [
+				{
+					id: 1,
+					name: serverName,
+					last_seen: Math.floor(Date.now() / 1000),
+				},
+			],
 		});
 	}
 
@@ -336,8 +340,8 @@ describe("WebSocketProvider", () => {
 
 		act(() => {
 			socket.open();
-			socket.message("null");
-			socket.message(JSON.stringify({ servers: [] }));
+			socket.message(JSON.stringify({ nodes: [null] }));
+			socket.message(JSON.stringify({ nodes: [null] }));
 		});
 
 		expect(screen.getByTestId("message-count")).toHaveTextContent("0");

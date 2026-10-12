@@ -63,9 +63,9 @@ describe("ServerCard", () => {
 		expect(screen.getByText("Windows")).toBeInTheDocument();
 		expect(screen.getByText("12.00%")).toBeInTheDocument();
 		expect(screen.getAllByText("25.00%")).toHaveLength(2);
-		expect(screen.getByText("serverCard.upload:2.00 GiB")).toBeInTheDocument();
+		expect(screen.getByText("serverCard.totalUpload:2.00 GiB")).toBeInTheDocument();
 		expect(
-			screen.getByText("serverCard.download:1.00 GiB"),
+			screen.getByText("serverCard.totalDownload:1.00 GiB"),
 		).toBeInTheDocument();
 		expect(screen.getByText("1Gbps")).toBeInTheDocument();
 		expect(

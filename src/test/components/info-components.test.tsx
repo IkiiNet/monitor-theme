@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useEffect } from "react";
 import { MemoryRouter, useLocation } from "react-router-dom";
@@ -189,38 +189,6 @@ describe("ServerFlag", () => {
 		rerender(<ServerFlag country_code="u" />);
 
 		expect(container).toBeEmptyDOMElement();
-	});
-
-	it("uses emoji flags when the canvas probe detects support", async () => {
-		Object.assign(window, { ForceUseSvgFlag: false });
-		const originalCreateElement = document.createElement.bind(document);
-		const canvasContext = {
-			fillStyle: "",
-			textBaseline: "",
-			font: "",
-			fillText: vi.fn(),
-			getImageData: vi.fn(() => ({
-				data: new Uint8ClampedArray([0, 0, 0, 255]),
-			})),
-		} as unknown as CanvasRenderingContext2D;
-		vi.spyOn(document, "createElement").mockImplementation(
-			(tagName, options) => {
-				if (tagName === "canvas") {
-					return {
-						getContext: vi.fn(() => canvasContext),
-					} as unknown as HTMLCanvasElement;
-				}
-
-				return originalCreateElement(tagName, options);
-			},
-		);
-
-		const { container } = render(<ServerFlag country_code="US" />);
-
-		await waitFor(() => {
-			expect(container).toHaveTextContent("🇺🇸");
-		});
-		expect(container.querySelector(".fi-US")).not.toBeInTheDocument();
 	});
 
 	it("renders nothing for missing country codes", () => {

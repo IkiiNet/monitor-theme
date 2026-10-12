@@ -440,7 +440,7 @@ describe("Servers page", () => {
 		expect(screen.getAllByTestId("server-card")).toHaveLength(2000);
 	});
 
-	it("toggles map and service tracker controls when service data exists", async () => {
+	it("toggles the service tracker and inline controls when service data exists", async () => {
 		apiMocks.fetchService.mockResolvedValue({
 			success: true,
 			data: {
@@ -478,19 +478,19 @@ describe("Servers page", () => {
 				container.querySelectorAll(
 					".server-overview-controls section > button",
 				),
-			).toHaveLength(3);
+			).toHaveLength(2);
 		});
 
 		const controls = container.querySelectorAll(
 			".server-overview-controls section > button",
 		);
 		await user.click(controls[0]);
-		expect(screen.getByTestId("global-map")).toHaveTextContent("2");
-		expect(localStorage.getItem("showMap")).toBe("1");
-
-		await user.click(controls[1]);
 		expect(screen.getByTestId("service-tracker")).toHaveTextContent("2");
 		expect(localStorage.getItem("showServices")).toBe("1");
+
+		await user.click(controls[1]);
+		expect(localStorage.getItem("inline")).toBe("1");
+		expect(screen.getAllByTestId("server-card-inline")).toHaveLength(2);
 	});
 
 	it("does not enable inline cards from storage on mobile widths", () => {

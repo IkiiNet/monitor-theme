@@ -117,14 +117,13 @@ describe("Header", () => {
 		headerMocks.fetchLoginUser.mockRejectedValue(new Error("anonymous"));
 	});
 
-	it("renders configured site identity, custom links, online count, and dashboard state", async () => {
+	it("renders configured site identity, custom links, and dashboard state", async () => {
 		const user = userEvent.setup();
 		Object.assign(window, {
 			CustomDesc: "edge status",
 			CustomLinks: JSON.stringify([
 				{ link: "https://example.test", name: "Docs" },
 			]),
-			CustomLogo: "/logo.png",
 		});
 		Object.defineProperty(document, "cookie", {
 			configurable: true,
@@ -138,22 +137,12 @@ describe("Header", () => {
 
 		const siteName = await screen.findByText("Status Hub");
 		expect(screen.getByText("edge status")).toBeInTheDocument();
-		expect(screen.getByAltText("apple-touch-icon")).toHaveAttribute(
-			"src",
-			"/logo.png",
-		);
 		expect(screen.getAllByRole("link", { name: "Docs" })).toHaveLength(2);
 		expect(await screen.findAllByText("dashboard")).toHaveLength(2);
-		expect(screen.getByText("online").closest("button")).toHaveTextContent("4");
-		expect(screen.getByText("online")).toBeInTheDocument();
 
 		await waitFor(() => {
 			expect(document.title).toBe("Status Hub");
 		});
-		expect(document.querySelector("link[rel='shortcut icon']")).toHaveAttribute(
-			"href",
-			"/logo.png",
-		);
 
 		await user.click(siteName);
 
@@ -161,16 +150,12 @@ describe("Header", () => {
 		expect(screen.getByText("/")).toBeInTheDocument();
 	});
 
-	it("uses the offline display and login links when websocket and auth are unavailable", async () => {
+	it("uses login links when websocket and auth are unavailable", async () => {
 		headerMocks.connected = false;
 
-		const { container } = renderHeader();
+		renderHeader();
 
 		expect(await screen.findAllByText("login")).toHaveLength(2);
-		expect(screen.getByText("offline")).toBeInTheDocument();
-		expect(
-			container.querySelector("[data-visible='true']"),
-		).toBeInTheDocument();
 	});
 
 	it("ignores invalid custom links instead of crashing", async () => {

@@ -230,7 +230,7 @@ describe("ServerDetailChart", () => {
 
 		await user.click(screen.getByText("serverDetailChart.period7d"));
 
-		expect(detailChartMocks.fetchServerMetrics).not.toHaveBeenCalled();
+		expect(detailChartMocks.fetchServerMetrics).toHaveBeenCalled();
 	});
 
 	it("prevents historical periods when TSDB is disabled", async () => {

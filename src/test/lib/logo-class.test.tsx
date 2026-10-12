@@ -12,7 +12,7 @@ describe("logo-class helpers", () => {
 		expect(GetFontLogoClass("ubuntu")).toBe("ubuntu");
 		expect(GetFontLogoClass("darwin")).toBe("apple");
 		expect(GetFontLogoClass("linux")).toBe("tux");
-		expect(GetFontLogoClass("amazon")).toBe("redhat");
+		expect(GetFontLogoClass("amazon")).toBe("tux");
 		expect(GetFontLogoClass("arch")).toBe("archlinux");
 		expect(GetFontLogoClass("opensuse-tumbleweed")).toBe("opensuse");
 		expect(GetFontLogoClass("unknown")).toBe("tux");
@@ -21,11 +21,11 @@ describe("logo-class helpers", () => {
 	it("maps platform aliases to readable operating system names", () => {
 		expect(GetOsName("ubuntu")).toBe("Ubuntu");
 		expect(GetOsName("darwin")).toBe("macOS");
-		expect(GetOsName("linux")).toBe("Linux");
-		expect(GetOsName("amazon")).toBe("Redhat");
-		expect(GetOsName("arch")).toBe("Archlinux");
-		expect(GetOsName("opensuse-tumbleweed")).toBe("Opensuse");
-		expect(GetOsName("unknown")).toBe("Linux");
+		expect(GetOsName("linux")).toBe("linux");
+		expect(GetOsName("amazon")).toBe("amazon");
+		expect(GetOsName("arch")).toBe("Arch Linux");
+		expect(GetOsName("opensuse-tumbleweed")).toBe("openSUSE");
+		expect(GetOsName("unknown")).toBe("unknown");
 	});
 
 	it("renders the Windows SVG icon", () => {

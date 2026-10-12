@@ -23,94 +23,83 @@ describe("nezha api fetchers", () => {
 		vi.stubGlobal("fetch", vi.fn());
 	});
 
-	it("returns setting payloads", async () => {
-		const payload = {
+	it("returns setting payloads derived from /api/me", async () => {
+		vi.mocked(fetch).mockResolvedValueOnce(
+			jsonResponse({ authed: true, site_name: "Nezha" }),
+		);
+
+		await expect(fetchSetting()).resolves.toEqual({
 			success: true,
 			data: {
 				config: {
 					debug: false,
-					language: "en-US",
+					language: "",
 					site_name: "Nezha",
 					user_template: "",
 					admin_template: "",
 					custom_code: "",
 				},
-				version: "1.0.0",
+				version: "",
+				tsdb_enabled: true,
 			},
-		};
-		vi.mocked(fetch).mockResolvedValueOnce(jsonResponse(payload));
-
-		await expect(fetchSetting()).resolves.toEqual(payload);
-		expect(fetch).toHaveBeenCalledWith("/api/v1/setting");
+		});
+		expect(fetch).toHaveBeenCalledWith("/api/me", {
+			credentials: "same-origin",
+			cache: "no-store",
+		});
 	});
 
-	it("throws API error messages returned by service endpoints", async () => {
-		vi.mocked(fetch).mockResolvedValueOnce(
-			jsonResponse({ error: "service unavailable" }),
-		);
-
-		await expect(fetchService()).rejects.toThrow("service unavailable");
+	it("returns static service data without calling the network", async () => {
+		await expect(fetchService()).resolves.toEqual({
+			success: true,
+			data: {
+				services: {},
+				cycle_transfer_stats: {},
+			},
+		});
+		expect(fetch).not.toHaveBeenCalled();
 	});
 
-	it("adds monitor and metrics query parameters when periods are provided", async () => {
+	it("requests monitor and metrics data with hours and series query parameters", async () => {
 		vi.mocked(fetch)
-			.mockResolvedValueOnce(jsonResponse({ success: true, data: [] }))
-			.mockResolvedValueOnce(
-				jsonResponse({
-					success: true,
-					data: {
-						server_id: 7,
-						server_name: "edge",
-						metric: "cpu",
-						data_points: [],
-					},
-				}),
-			);
+			.mockResolvedValueOnce(jsonResponse({ ping: [] }))
+			.mockResolvedValueOnce(jsonResponse({ metrics: [] }));
 
 		await fetchMonitor(7, "7d");
 		await fetchServerMetrics(7, "cpu", "30d");
 
 		expect(fetch).toHaveBeenNthCalledWith(
 			1,
-			"/api/v1/server/7/service?period=7d",
+			"/api/nodes/7/metrics?hours=168&series=ping",
+			{ credentials: "same-origin", cache: "no-store" },
 		);
 		expect(fetch).toHaveBeenNthCalledWith(
 			2,
-			"/api/v1/server/7/metrics?metric=cpu&period=30d",
+			"/api/nodes/7/metrics?hours=720&series=metrics",
+			{ credentials: "same-origin", cache: "no-store" },
 		);
 	});
 
-	it("refreshes the token when a logged-in browser session has cookies", async () => {
-		const consoleLog = vi
-			.spyOn(console, "log")
-			.mockImplementation(() => undefined);
-		Object.defineProperty(document, "cookie", {
-			configurable: true,
-			value: "nezha_token=token; nz-csrf=test-csrf-token",
+	it("loads the login user from /api/me and rejects anonymous sessions", async () => {
+		vi.mocked(fetch).mockResolvedValueOnce(jsonResponse({ authed: false }));
+
+		await expect(fetchLoginUser()).rejects.toThrow("需要登录后查看");
+		expect(fetch).toHaveBeenNthCalledWith(1, "/api/me", {
+			credentials: "same-origin",
+			cache: "no-store",
 		});
-		const payload = {
+
+		vi.mocked(fetch).mockResolvedValueOnce(jsonResponse({ authed: true }));
+
+		await expect(fetchLoginUser()).resolves.toEqual({
 			success: true,
 			data: {
-				id: 1,
+				id: 0,
 				username: "admin",
 				password: "",
-				created_at: "2025-01-01T00:00:00Z",
-				updated_at: "2025-01-01T00:00:00Z",
-			},
-		};
-		vi.mocked(fetch)
-			.mockResolvedValueOnce(jsonResponse(payload))
-			.mockResolvedValueOnce(jsonResponse({ success: true }));
-
-		await expect(fetchLoginUser()).resolves.toEqual(payload);
-
-		expect(fetch).toHaveBeenNthCalledWith(1, "/api/v1/profile");
-		expect(fetch).toHaveBeenNthCalledWith(2, "/api/v1/refresh-token", {
-			method: "POST",
-			headers: {
-				"X-CSRF-Token": "test-csrf-token",
+				created_at: "",
+				updated_at: "",
 			},
 		});
-		expect(consoleLog).not.toHaveBeenCalled();
 	});
 });
