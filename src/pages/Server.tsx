@@ -19,6 +19,7 @@ import { SORT_TYPES } from "@/context/sort-context";
 import { useSort } from "@/hooks/use-sort";
 import { useStatus } from "@/hooks/use-status";
 import { useWebSocketContext } from "@/hooks/use-websocket-context";
+import { useThemeConfig } from "@/hooks/use-theme-config";
 import { fetchServerGroup, fetchService } from "@/lib/nezha-api";
 import { cn } from "@/lib/utils";
 import type { NezhaServer, ServerGroup } from "@/types/nezha-api";
@@ -98,6 +99,7 @@ export default function Servers({
 }) {
 	const { t } = useTranslation();
 	const { sortType, sortOrder, setSortOrder, setSortType } = useSort();
+	const themeCfg = useThemeConfig();
 	const { data: groupData, error: groupError } = useQuery({
 		queryKey: ["server-group"],
 		queryFn: () => fetchServerGroup(),
@@ -559,7 +561,12 @@ export default function Servers({
 						))}
 					</section>
 				) : (
-					<section className="grid auto-rows-[1fr] grid-cols-1 gap-2 md:grid-cols-2 mt-6 server-card-list">
+					<section
+						className={cn(
+							"grid grid-cols-1 gap-2 md:grid-cols-2 mt-6 server-card-list",
+							{ "auto-rows-[1fr]": themeCfg.card_equal_height !== false },
+						)}
+					>
 						{filteredServers.map((serverInfo) => (
 							<ServerCard
 								key={serverInfo.id}

@@ -20,18 +20,6 @@ export const THEME_CONFIG_FIELDS: ThemeConfigField[] = [
 	{ key: "site_subtitle", type: "string", default: "" },
 	{ key: "logo_url", type: "string", default: "" },
 	{ key: "favicon_url", type: "string", default: "" },
-	{ key: "notice", type: "text", default: "" },
-	{
-		key: "default_language",
-		type: "select",
-		default: "zh-CN",
-		options: [
-			{ value: "zh-CN", label: "简体中文" },
-			{ value: "zh-TW", label: "繁體中文" },
-			{ value: "en", label: "English" },
-			{ value: "ja", label: "日本語" },
-		],
-	},
 	{
 		key: "default_theme",
 		type: "select",
@@ -42,9 +30,64 @@ export const THEME_CONFIG_FIELDS: ThemeConfigField[] = [
 			{ value: "dark", label: "深色" },
 		],
 	},
+	{ key: "background_image", type: "string", default: "" },
+	{ key: "mobile_background_image", type: "string", default: "" },
+	{ key: "notice", type: "text", default: "" },
+	{ key: "card_equal_height", type: "boolean", default: true },
+	{ key: "force_card_inline", type: "boolean", default: false },
+	{ key: "force_show_services", type: "boolean", default: false },
+	{
+		key: "force_sort_type",
+		type: "select",
+		default: "",
+		options: [
+			{ value: "", label: "不强制" },
+			{ value: "name", label: "名称" },
+			{ value: "uptime", label: "运行时间" },
+			{ value: "system", label: "系统" },
+			{ value: "cpu", label: "CPU" },
+			{ value: "mem", label: "内存" },
+			{ value: "disk", label: "硬盘" },
+			{ value: "up", label: "上行速率" },
+			{ value: "down", label: "下行速率" },
+			{ value: "up total", label: "上行流量" },
+			{ value: "down total", label: "下行流量" },
+		],
+	},
+	{
+		key: "force_sort_order",
+		type: "select",
+		default: "",
+		options: [
+			{ value: "", label: "不强制" },
+			{ value: "desc", label: "降序" },
+			{ value: "asc", label: "升序" },
+		],
+	},
+	{ key: "force_peak_cut", type: "boolean", default: true },
+	{ key: "custom_links", type: "text", default: "" },
+	{
+		key: "default_language",
+		type: "select",
+		default: "zh-CN",
+		options: [
+			{ value: "zh-CN", label: "简体中文" },
+			{ value: "en-US", label: "English" },
+		],
+	},
 ];
 
-export async function loadThemeConfig(): Promise<Record<string, unknown>> {
+let cache: Promise<Record<string, unknown>> | null = null;
+
+/** 读取运行时的设置（带缓存，main 与 hook 共用同一次请求）。失败回落默认。 */
+export function loadThemeConfig(): Promise<Record<string, unknown>> {
+	if (!cache) {
+		cache = loadThemeConfigRaw();
+	}
+	return cache;
+}
+
+async function loadThemeConfigRaw(): Promise<Record<string, unknown>> {
 	let saved: Record<string, unknown> = {};
 	try {
 		const res = await fetch(`/api/themes/${THEME_SHORT}/config`, {
