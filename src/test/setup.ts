@@ -92,6 +92,7 @@ afterEach(() => {
 	});
 	document.documentElement.className = "";
 	document.documentElement.removeAttribute("style");
+	document.documentElement.removeAttribute("data-glass");
 	Object.defineProperty(document, "cookie", {
 		configurable: true,
 		value: "",
@@ -104,6 +105,7 @@ afterEach(() => {
 	window.ForcePeakCutEnabled = false;
 	window.ForceSortType = undefined;
 	window.ForceSortOrder = undefined;
+	window.GlassStyle = "";
 	vi.unstubAllGlobals();
 	vi.restoreAllMocks();
 	vi.useRealTimers();

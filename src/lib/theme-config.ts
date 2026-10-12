@@ -32,6 +32,16 @@ export const THEME_CONFIG_FIELDS: ThemeConfigField[] = [
 	},
 	{ key: "background_image", type: "string", default: "" },
 	{ key: "mobile_background_image", type: "string", default: "" },
+	{
+		key: "glass_style",
+		type: "select",
+		default: "off",
+		options: [
+			{ value: "off", label: "关闭" },
+			{ value: "light", label: "通透" },
+			{ value: "liquid", label: "液态玻璃" },
+		],
+	},
 	{ key: "notice", type: "text", default: "" },
 	{ key: "card_equal_height", type: "boolean", default: true },
 	{ key: "force_card_inline", type: "boolean", default: false },

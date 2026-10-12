@@ -11,6 +11,7 @@ import { SortProvider } from "./context/sort-provider";
 import { StatusProvider } from "./context/status-provider";
 import { TooltipProvider } from "./context/tooltip-provider";
 import { WebSocketProvider } from "./context/websocket-provider";
+import { applyGlassStyle } from "./lib/glass";
 import { loadThemeConfig } from "./lib/theme-config";
 import "./i18n";
 import "./index.css";
@@ -40,6 +41,8 @@ function applyThemeConfigGlobals(cfg: Record<string, unknown>): void {
 	w.CustomLinks = asStr(cfg.custom_links);
 	w.CustomBackgroundImage = asStr(cfg.background_image);
 	w.CustomMobileBackgroundImage = asStr(cfg.mobile_background_image);
+	w.GlassStyle = asStr(cfg.glass_style);
+	applyGlassStyle(w.GlassStyle);
 }
 
 async function bootstrap(): Promise<void> {

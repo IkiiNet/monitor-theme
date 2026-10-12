@@ -10,6 +10,7 @@ declare global {
 		ForcePeakCutEnabled: boolean;
 		ForceSortType?: string;
 		ForceSortOrder?: string;
+		GlassStyle?: string;
 	}
 }
 

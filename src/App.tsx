@@ -124,14 +124,14 @@ const MainApp: React.FC = () => {
 				/>
 			)}
 			<div
-				className={cn("flex min-h-screen w-full flex-col", {
+				className={cn("theme-shell flex min-h-screen w-full flex-col", {
 					"bg-background": !customBackgroundImage,
 				})}
 			>
 				<main className="flex z-20 min-h-[calc(100vh-calc(var(--spacing)*16))] flex-1 flex-col gap-4 p-4 md:p-10 md:pt-8">
 					<RefreshToast />
 					{typeof themeCfg.notice === "string" && themeCfg.notice.trim() ? (
-						<div className="mx-auto w-full max-w-5xl rounded-lg border border-stone-200 bg-white/70 px-4 py-2 text-center text-sm text-stone-700 dark:border-stone-800 dark:bg-stone-900/60 dark:text-stone-200">
+						<div className="glass-surface mx-auto w-full max-w-5xl rounded-lg border border-stone-200 bg-white/70 px-4 py-2 text-center text-sm text-stone-700 dark:border-stone-800 dark:bg-stone-900/60 dark:text-stone-200">
 							{themeCfg.notice}
 						</div>
 					) : null}

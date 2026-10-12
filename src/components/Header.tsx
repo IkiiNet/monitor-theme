@@ -150,10 +150,13 @@ function Header() {
 							variant="outline"
 							size="sm"
 							onClick={handleBackgroundToggle}
-							className={cn("h-8 rounded-full px-4 bg-white dark:bg-black", {
-								"bg-white/70 dark:bg-black/70": customBackgroundImage,
-								"hidden sm:block": customMobileBackgroundImage,
-							})}
+							className={cn(
+								"h-8 rounded-full px-4 bg-white dark:bg-black glass-surface",
+								{
+									"bg-white/70 dark:bg-black/70": customBackgroundImage,
+									"hidden sm:block": customMobileBackgroundImage,
+								},
+							)}
 						>
 							<ImageMinus className="w-4 h-4" />
 						</Button>
@@ -237,7 +240,7 @@ export function RefreshToast() {
 	}
 
 	return (
-		<div className="refresh-toast-animate fixed left-1/2 -translate-x-1/2 top-8 z-999 flex items-center justify-between gap-4 rounded-[50px] border border-solid bg-white px-2 py-1.5 shadow-xl shadow-black/5 dark:border-stone-700 dark:bg-stone-800 dark:shadow-none">
+		<div className="glass-surface refresh-toast-animate fixed left-1/2 -translate-x-1/2 top-8 z-999 flex items-center justify-between gap-4 rounded-[50px] border border-solid bg-white px-2 py-1.5 shadow-xl shadow-black/5 dark:border-stone-700 dark:bg-stone-800 dark:shadow-none">
 			<section className="flex items-center gap-1.5">
 				<LoadingSpinner />
 				<p className="text-[12.5px] font-medium">{t("refreshing")}...</p>

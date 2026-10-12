@@ -2,7 +2,7 @@
 	"name": "NezhaDash",
 	"short": "nezha-dash",
 	"description": "nezha-dash V2 移植版",
-	"version": "1.8.4",
+	"version": "1.9.0",
 	"author": "hamster1963 (ported to monitor)",
 	"url": "https://github.com/IkiiNet/monitor-theme",
 	"config": [
@@ -60,6 +60,18 @@
 			"label": "移动端背景",
 			"default": "",
 			"help": "窄屏下的背景图地址；留空无背景"
+		},
+		{
+			"key": "glass_style",
+			"type": "select",
+			"label": "毛玻璃风格",
+			"default": "off",
+			"help": "Apple Liquid Glass 拟态毛玻璃：卡片/弹层/按钮通透化，配背景图效果最佳",
+			"options": [
+				{ "value": "off", "label": "关闭" },
+				{ "value": "light", "label": "通透" },
+				{ "value": "liquid", "label": "液态玻璃" }
+			]
 		},
 
 		{ "type": "title", "label": "首页与列表" },
