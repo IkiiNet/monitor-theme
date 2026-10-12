@@ -17,7 +17,6 @@ import { LoadingSpinner } from "./loading/Loader";
 import { Button } from "./ui/button";
 
 function Header() {
-	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { backgroundImage, updateBackground } = useBackground();
 
@@ -45,7 +44,7 @@ function Header() {
 	const hasLogo = logoSrc.length > 0;
 
 	// @ts-expect-error CustomDesc is a global variable
-	const globalDesc = window.CustomDesc || t("nezha");
+	const globalDesc = window.CustomDesc || "Monitor";
 	const subtitle = themeCfg.site_subtitle;
 	const customDesc =
 		typeof subtitle === "string" && subtitle.trim() ? subtitle : globalDesc;
@@ -82,7 +81,7 @@ function Header() {
 	}, [faviconUrl]);
 
 	useEffect(() => {
-		document.title = siteName || "哪吒监控 Nezha Monitoring";
+		document.title = siteName || "Monitor";
 	}, [siteName]);
 
 	const handleBackgroundToggle = () => {
@@ -128,7 +127,7 @@ function Header() {
 					{isLoading ? (
 						<Skeleton className="h-6 w-20 rounded-[5px] bg-muted-foreground/10 animate-none" />
 					) : (
-						siteName || "NEZHA"
+						siteName || "Monitor"
 					)}
 					<Separator
 						orientation="vertical"

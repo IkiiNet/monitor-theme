@@ -2,7 +2,7 @@
  * monitor 数据适配层
  * ------------------------------------------------------------
  * 把 monitor hub 的接口（/api/me、/api/nodes、/api/ws、
- * /api/nodes/{id}/metrics）转换成 nezha-dash 期望的「哪吒」数据结构，
+ * /api/nodes/{id}/metrics）转换成 nezha-dash 期望的数据结构，
  * 使上层 UI 组件完全不用改动。
  */
 
@@ -142,7 +142,7 @@ function toNumber(value: unknown): number {
 	return Number.isFinite(n) ? n : 0;
 }
 
-/** monitor 节点 → 哪吒 NezhaServer */
+/** monitor 节点 → NezhaServer */
 export function mapNode(node: MonitorNode): NezhaServer {
 	const m: MonitorMetrics = node.metrics ?? {};
 	const load = Array.isArray(m.load) ? m.load : [];
@@ -211,7 +211,7 @@ export function mapNodes(nodes: MonitorNode[]): NezhaServer[] {
 	return nodes.map(mapNode);
 }
 
-/** monitor /api/ws 的帧 { nodes:[...] } → 哪吒 NezhaWebsocketResponse */
+/** monitor /api/ws 的帧 → NezhaWebsocketResponse */
 export function mapWsFrame(raw: unknown): NezhaWebsocketResponse {
 	const data = (raw ?? {}) as MonitorNodesResponse;
 	const nodes = Array.isArray(data.nodes) ? data.nodes : [];

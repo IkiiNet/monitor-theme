@@ -12,7 +12,7 @@ export interface NezhaServer {
 	country_code: string;
 	host: NezhaServerHost;
 	state: NezhaServerStatus;
-	// monitor hub 提供的、哪吒没有的字段（用于详情页补全信息）
+	// monitor hub 提供的、适配层补充的字段（用于详情页补全信息）
 	monitor?: NezhaServerMonitor;
 }
 
