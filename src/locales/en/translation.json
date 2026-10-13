@@ -71,7 +71,10 @@
 		"download": "Download",
 		"lastActive": "Last active time",
 		"temperature": "Temperature",
-		"bootTime": "Boot time"
+		"bootTime": "Boot time",
+		"monthlyTraffic": "Monthly traffic",
+		"unlimited": "Unlimited",
+		"trafficResetDay": "Resets on day {{day}}"
 	},
 	"serverDetailChart": {
 		"process": "Process",

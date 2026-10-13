@@ -8,6 +8,7 @@ import {
 	getDaysBetweenDatesWithAutoRenewal,
 	getNextCycleTime,
 	handlePublicNote,
+	monthUsage,
 	nezhaFetcher,
 	parsePublicNote,
 } from "@/lib/utils";
@@ -275,6 +276,43 @@ describe("nezha data formatting", () => {
 		expect(result.swap).toBe(0);
 		expect(result.disk).toBe(0);
 		expect(result.public_note).toBe("");
+	});
+});
+
+describe("monthUsage", () => {
+	it("returns 0 without a monitor payload", () => {
+		expect(monthUsage(undefined)).toBe(0);
+	});
+
+	it("prefers the hub-provided month_used", () => {
+		expect(
+			monthUsage({
+				month_used: 123,
+				month_rx: 1,
+				month_tx: 2,
+				traffic_mode: "up",
+			}),
+		).toBe(123);
+	});
+
+	it("derives from rx/tx by traffic_mode for older hubs", () => {
+		expect(monthUsage({ month_rx: 10, month_tx: 3, traffic_mode: "up" })).toBe(
+			3,
+		);
+		expect(
+			monthUsage({ month_rx: 10, month_tx: 3, traffic_mode: "down" }),
+		).toBe(10);
+		expect(monthUsage({ month_rx: 10, month_tx: 3, traffic_mode: "max" })).toBe(
+			10,
+		);
+	});
+
+	it("defaults to rx + tx when the mode is sum or unknown", () => {
+		expect(monthUsage({ month_rx: 10, month_tx: 3, traffic_mode: "sum" })).toBe(
+			13,
+		);
+		expect(monthUsage({ month_rx: 10, month_tx: 3 })).toBe(13);
+		expect(monthUsage({})).toBe(0);
 	});
 });
 

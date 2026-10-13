@@ -71,7 +71,10 @@
 		"download": "下载",
 		"lastActive": "最后上报时间",
 		"temperature": "温度",
-		"bootTime": "启动时间"
+		"bootTime": "启动时间",
+		"monthlyTraffic": "本月流量",
+		"unlimited": "不限",
+		"trafficResetDay": "每月 {{day}} 号重置"
 	},
 	"serverDetailChart": {
 		"process": "进程数",

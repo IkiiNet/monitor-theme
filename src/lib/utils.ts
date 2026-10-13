@@ -1,10 +1,32 @@
 import { type ClassValue, clsx } from "clsx";
 import dayjs from "dayjs";
 import { twMerge } from "tailwind-merge";
-import type { NezhaServer } from "@/types/nezha-api";
+import type { NezhaServer, NezhaServerMonitor } from "@/types/nezha-api";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
+}
+
+/**
+ * 本月已用流量（按站点设置的「计算方式」口径）。
+ * 优先用 hub 直接给的 month_used；旧版 hub 没有时，按 month_rx/month_tx
+ * 和 traffic_mode 现算：sum 上下行相加、max 取较大值、up 仅上行、down 仅下行。
+ */
+export function monthUsage(monitor: NezhaServerMonitor | undefined): number {
+	if (!monitor) return 0;
+	if (typeof monitor.month_used === "number") return monitor.month_used;
+	const rx = monitor.month_rx ?? 0;
+	const tx = monitor.month_tx ?? 0;
+	switch (monitor.traffic_mode) {
+		case "up":
+			return tx;
+		case "down":
+			return rx;
+		case "max":
+			return Math.max(rx, tx);
+		default:
+			return rx + tx;
+	}
 }
 
 export function formatNezhaInfo(now: number, serverInfo: NezhaServer) {

@@ -73,12 +73,14 @@ export interface MonitorNode {
 	currency?: string;
 	price?: number;
 	traffic_limit?: number;
+	traffic_mode?: string;
 	traffic_reset_day?: number;
 	month_start?: string;
 	total_rx?: number;
 	total_tx?: number;
 	month_rx?: number;
 	month_tx?: number;
+	month_used?: number;
 	day_rx?: number;
 	day_tx?: number;
 	sort?: number;
@@ -196,6 +198,9 @@ export function mapNode(node: MonitorNode): NezhaServer {
 			month_rx: node.month_rx ?? 0,
 			month_tx: node.month_tx ?? 0,
 			traffic_limit: node.traffic_limit ?? 0,
+			traffic_mode: node.traffic_mode ?? "",
+			month_used: node.month_used,
+			traffic_reset_day: node.traffic_reset_day ?? 1,
 			price: node.price ?? 0,
 			currency: node.currency ?? "",
 			billing_cycle: node.billing_cycle ?? "",

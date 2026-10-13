@@ -21,7 +21,10 @@ export interface NezhaServerMonitor {
 	day_tx?: number;
 	month_rx?: number;
 	month_tx?: number;
+	month_used?: number;
+	traffic_mode?: string;
 	traffic_limit?: number;
+	traffic_reset_day?: number;
 	price?: number;
 	currency?: string;
 	billing_cycle?: string;
