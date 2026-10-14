@@ -87,6 +87,9 @@ afterEach(() => {
 		.forEach((node) => {
 			node.remove();
 		});
+	document.head.querySelectorAll("link[rel*='icon']").forEach((node) => {
+		node.remove();
+	});
 	document.body.querySelectorAll("[data-injected]").forEach((node) => {
 		node.remove();
 	});

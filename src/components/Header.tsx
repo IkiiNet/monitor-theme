@@ -62,21 +62,14 @@ function Header() {
 			: undefined;
 
 	useEffect(() => {
-		const existing = document.querySelector("link[rel*='icon']");
-		if (!faviconUrl) {
-			// favicon_url 留空：不显示图标
-			if (existing?.parentNode) {
-				existing.parentNode.removeChild(existing);
-			}
-			return;
-		}
-		const link = existing || document.createElement("link");
-		// @ts-expect-error set link.type
+		const link =
+			document.querySelector<HTMLLinkElement>("link[rel*='icon']") ||
+			document.createElement("link");
 		link.type = "image/x-icon";
-		// @ts-expect-error set link.rel
 		link.rel = "shortcut icon";
-		// @ts-expect-error set link.href
-		link.href = faviconUrl;
+		// favicon_url 留空：用空 data URL，保证浏览器不再回退到 hub 的默认 /favicon.ico，
+		// 标签页保持空白；设置后再替换为指定图标。
+		link.href = faviconUrl || "data:,";
 		document.getElementsByTagName("head")[0].appendChild(link);
 	}, [faviconUrl]);
 

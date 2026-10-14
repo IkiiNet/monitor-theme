@@ -83,9 +83,10 @@ function ServerCardInline({
 					<div className="relative w-28 flex flex-col">
 						<p
 							className={cn(
-								"break-normal font-bold tracking-tight",
+								"truncate font-bold tracking-tight",
 								showFlag ? "text-xs " : "text-sm",
 							)}
+							title={name}
 						>
 							{name}
 						</p>
@@ -224,9 +225,10 @@ function ServerCardInline({
 				<div className="relative flex flex-col">
 					<p
 						className={cn(
-							"break-normal font-bold w-28 tracking-tight",
+							"truncate font-bold w-28 tracking-tight",
 							showFlag ? "text-xs" : "text-sm",
 						)}
+						title={name}
 					>
 						{name}
 					</p>

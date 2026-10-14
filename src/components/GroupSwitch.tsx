@@ -90,7 +90,7 @@ export default function GroupSwitch({
 			<div
 				ref={containerRef}
 				className={cn(
-					"relative flex items-center gap-1 rounded-[50px] bg-stone-100 p-[3px] dark:bg-stone-800",
+					"relative flex h-8 items-center gap-1 rounded-[50px] bg-stone-100 p-[3px] dark:bg-stone-800",
 					{
 						"bg-stone-100/70 dark:bg-stone-800/70": customBackgroundImage,
 					},
@@ -121,7 +121,7 @@ export default function GroupSwitch({
 							setCurrentTab(tab);
 						}}
 						className={cn(
-							"relative cursor-pointer rounded-full px-2.5 py-2 text-[13px] font-semibold transition-all duration-500  ease-in-out hover:text-stone-950  hover:dark:text-stone-50",
+							"relative flex h-full cursor-pointer items-center justify-center rounded-full px-2.5 text-[13px] font-semibold transition-all duration-500  ease-in-out hover:text-stone-950  hover:dark:text-stone-50",
 							currentTab === tab
 								? "text-black dark:text-white"
 								: "text-stone-400 dark:text-stone-500",

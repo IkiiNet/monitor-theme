@@ -193,6 +193,18 @@ describe("Header", () => {
 		expect(headerMocks.updateBackground).toHaveBeenCalledWith(undefined);
 	});
 
+	it("declares a blank favicon when none is configured", async () => {
+		renderHeader();
+		await screen.findByText("Nezha");
+
+		await waitFor(() => {
+			const link = document.head.querySelector<HTMLLinkElement>(
+				"link[rel*='icon']",
+			);
+			expect(link?.getAttribute("href")).toBe("data:,");
+		});
+	});
+
 	it("restores the saved custom background", async () => {
 		const user = userEvent.setup();
 		sessionStorage.setItem("savedBackgroundImage", "/saved.png");
