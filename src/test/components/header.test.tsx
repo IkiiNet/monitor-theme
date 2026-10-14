@@ -198,9 +198,8 @@ describe("Header", () => {
 		await screen.findByText("Nezha");
 
 		await waitFor(() => {
-			const link = document.head.querySelector<HTMLLinkElement>(
-				"link[rel*='icon']",
-			);
+			const link =
+				document.head.querySelector<HTMLLinkElement>("link[rel*='icon']");
 			expect(link?.getAttribute("href")).toBe("data:,");
 		});
 	});
