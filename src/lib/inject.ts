@@ -59,7 +59,7 @@ export const InjectContext = (content: string) => {
 	};
 
 	const handlers: { [key: string]: (element: HTMLElement) => Promise<void> } = {
-		SCRIPT: (element) => {
+		script: (element) => {
 			const scriptElement = element as HTMLScriptElement;
 			if (scriptElement.src) {
 				// 加载外部脚本
@@ -69,14 +69,14 @@ export const InjectContext = (content: string) => {
 				return executeInlineScript(scriptElement.textContent || "");
 			}
 		},
-		STYLE: (element) => loadStyle(element as HTMLStyleElement),
-		META: (element) => {
+		style: (element) => loadStyle(element as HTMLStyleElement),
+		meta: (element) => {
 			const meta = element.cloneNode(true) as HTMLElement;
 			meta.setAttribute(INJECTION_MARK, "true"); // 添加标识
 			document.head.appendChild(meta); // 将 meta 标签插入到 <head>
 			return Promise.resolve();
 		},
-		DEFAULT: (element) => {
+		default: (element) => {
 			element.setAttribute(INJECTION_MARK, "true"); // 添加标识
 			document.body.appendChild(element);
 			return Promise.resolve();
@@ -90,7 +90,8 @@ export const InjectContext = (content: string) => {
 		for (const node of Array.from(tempDiv.childNodes)) {
 			if (node.nodeType === Node.ELEMENT_NODE) {
 				const element = node as HTMLElement;
-				const handler = handlers[element.tagName] || handlers.DEFAULT;
+				const handler =
+					handlers[element.tagName.toLowerCase()] || handlers.default;
 				await handler(element); // 按顺序等待当前脚本或资源完成处理
 			} else if (node.nodeType === Node.TEXT_NODE) {
 				document.body.appendChild(

@@ -27,6 +27,7 @@ export function renderWithProviders(
 		...renderOptions
 	}: RenderWithProvidersOptions = {},
 ) {
+	// biome-ignore lint/correctness/noComponentHookFactories: test-only wrapper needs the per-call query client and route
 	function Wrapper({ children }: { children: ReactNode }) {
 		return (
 			<QueryClientProvider client={queryClient}>
