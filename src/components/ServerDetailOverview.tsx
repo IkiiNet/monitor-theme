@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useWebSocketContext } from "@/hooks/use-websocket-context";
 import { formatBytes } from "@/lib/format";
+import { getSession, removeSession } from "@/lib/safe-storage";
 import { cn, formatNezhaInfo, monthUsage } from "@/lib/utils";
 import NumericText from "./NumericText";
 import {
@@ -81,14 +82,14 @@ export default function ServerDetailOverview({
 	const [hasHistory, setHasHistory] = useState(false);
 
 	useEffect(() => {
-		const previousPath = sessionStorage.getItem("fromMainPage");
+		const previousPath = getSession("fromMainPage");
 		if (previousPath) {
 			setHasHistory(true);
 		}
 
 		return () => {
 			if (previousPath) {
-				sessionStorage.removeItem("fromMainPage");
+				removeSession("fromMainPage");
 			}
 		};
 	}, []);

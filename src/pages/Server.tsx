@@ -21,6 +21,7 @@ import { useStatus } from "@/hooks/use-status";
 import { useThemeConfig } from "@/hooks/use-theme-config";
 import { useWebSocketContext } from "@/hooks/use-websocket-context";
 import { fetchServerGroup, fetchService } from "@/lib/nezha-api";
+import { getLocal, getSession, setLocal, setSession } from "@/lib/safe-storage";
 import { cn } from "@/lib/utils";
 import type { NezhaServer, ServerGroup } from "@/types/nezha-api";
 
@@ -130,8 +131,8 @@ export default function Servers({
 			: undefined;
 
 	const restoreScrollPosition = useCallback(() => {
-		const isFromMainPage = sessionStorage.getItem("fromMainPage") === "true";
-		const savedPosition = sessionStorage.getItem("scrollPosition");
+		const isFromMainPage = getSession("fromMainPage") === "true";
+		const savedPosition = getSession("scrollPosition");
 		const scrollTop = savedPosition ? Number(savedPosition) : Number.NaN;
 
 		if (
@@ -152,12 +153,12 @@ export default function Servers({
 
 	const handleTagChange = (newGroup: string) => {
 		setCurrentGroup(newGroup);
-		sessionStorage.setItem("selectedGroup", newGroup);
-		sessionStorage.setItem("scrollPosition", String(window.scrollY || 0));
+		setSession("selectedGroup", newGroup);
+		setSession("scrollPosition", String(window.scrollY || 0));
 	};
 
 	useEffect(() => {
-		const showServicesState = localStorage.getItem("showServices");
+		const showServicesState = getLocal("showServices");
 		if (window.ForceShowServices) {
 			setShowServices("1");
 		} else if (showServicesState !== null) {
@@ -176,7 +177,7 @@ export default function Servers({
 			const isMobile = window.innerWidth < 768;
 
 			if (!isMobile) {
-				const inlineState = localStorage.getItem("inline");
+				const inlineState = getLocal("inline");
 				if (window.ForceCardInline) {
 					setInline("1");
 				} else if (inlineState !== null) {
@@ -195,7 +196,7 @@ export default function Servers({
 	}, []);
 
 	useEffect(() => {
-		const savedGroup = sessionStorage.getItem("selectedGroup") || "All";
+		const savedGroup = getSession("selectedGroup") || "All";
 		setCurrentGroup(savedGroup);
 	}, []);
 
@@ -442,10 +443,7 @@ export default function Servers({
 						<button
 							onClick={() => {
 								setShowServices(showServices === "0" ? "1" : "0");
-								localStorage.setItem(
-									"showServices",
-									showServices === "0" ? "1" : "0",
-								);
+								setLocal("showServices", showServices === "0" ? "1" : "0");
 							}}
 							className={cn(
 								"inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer items-center justify-center gap-0 h-8 rounded-full bg-blue-100 px-4 text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100",
@@ -464,7 +462,7 @@ export default function Servers({
 					<button
 						onClick={() => {
 							setInline(inline === "0" ? "1" : "0");
-							localStorage.setItem("inline", inline === "0" ? "1" : "0");
+							setLocal("inline", inline === "0" ? "1" : "0");
 						}}
 						className={cn(
 							"inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer items-center justify-center gap-0 h-8 rounded-full bg-blue-100 px-4 text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100",

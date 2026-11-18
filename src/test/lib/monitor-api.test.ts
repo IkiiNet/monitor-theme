@@ -112,6 +112,36 @@ describe("monitor-api adapter", () => {
 		expect(mapWsFrame({}).servers).toEqual([]);
 	});
 
+	it("prefers last_seen_ago so a skewed hub clock does not mark nodes offline", () => {
+		const now = Math.floor(Date.now() / 1000);
+		const frame = mapWsFrame({
+			nodes: [
+				{
+					id: 1,
+					name: "fresh",
+					// hub 时钟比浏览器慢 650 秒，但 last_seen_ago 由 hub 自己算
+					last_seen: now - 650,
+					last_seen_ago: 1,
+				},
+			],
+		});
+
+		expect(frame.online).toBe(1);
+		expect(Date.parse(frame.servers[0].last_active)).toBeGreaterThan(
+			Date.now() - 10_000,
+		);
+	});
+
+	it("converts last_seen_ago with the provided reference time", () => {
+		const node = mapNode(
+			{ id: 1, name: "n", last_seen: 1000, last_seen_ago: 30 },
+			1_700_000_000_000,
+		);
+		expect(node.last_active).toBe(
+			new Date(1_700_000_000_000 - 30_000).toISOString(),
+		);
+	});
+
 	it("falls back when optional node fields are missing", () => {
 		const node = mapNode({ id: 9, name: "n" });
 		expect(node.country_code).toBe("");

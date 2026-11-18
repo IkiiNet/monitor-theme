@@ -13,6 +13,7 @@ import { useTheme } from "./hooks/use-theme";
 import { useThemeConfig } from "./hooks/use-theme-config";
 import { InjectContext } from "./lib/inject";
 import { fetchSetting } from "./lib/nezha-api";
+import { getLocal } from "./lib/safe-storage";
 import { cn } from "./lib/utils";
 import ErrorPage from "./pages/ErrorPage";
 import Server from "./pages/Server";
@@ -51,7 +52,7 @@ const MainApp: React.FC = () => {
 	const themeCfg = useThemeConfig();
 	useEffect(() => {
 		const lang = themeCfg.default_language;
-		if (typeof lang === "string" && lang && !localStorage.getItem("language")) {
+		if (typeof lang === "string" && lang && !getLocal("language")) {
 			i18n.changeLanguage(lang);
 		}
 	}, [themeCfg.default_language, i18n]);
@@ -59,7 +60,7 @@ const MainApp: React.FC = () => {
 		const next = themeCfg.default_theme;
 		if (
 			(next === "light" || next === "dark" || next === "system") &&
-			!localStorage.getItem("vite-ui-theme")
+			!getLocal("vite-ui-theme")
 		) {
 			setTheme(next);
 		}
@@ -89,10 +90,7 @@ const MainApp: React.FC = () => {
 		return null;
 	}
 
-	if (
-		settingData?.data?.config?.language &&
-		!localStorage.getItem("language")
-	) {
+	if (settingData?.data?.config?.language && !getLocal("language")) {
 		i18n.changeLanguage(settingData?.data?.config?.language);
 	}
 

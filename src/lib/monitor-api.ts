@@ -145,19 +145,33 @@ function toNumber(value: unknown): number {
 }
 
 /** monitor 节点 → NezhaServer */
-export function mapNode(node: MonitorNode): NezhaServer {
+export function mapNode(node: MonitorNode, now = Date.now()): NezhaServer {
 	const m: MonitorMetrics = node.metrics ?? {};
 	const load = Array.isArray(m.load) ? m.load : [];
 	const totalRx = node.total_rx ?? m.total_rx ?? 0;
 	const totalTx = node.total_tx ?? m.total_tx ?? 0;
+	// hub 1.4.0 起提供 last_seen_ago（按 hub 时钟算好的秒数）。
+	// 优先用它换算，避免服务器时钟与访客浏览器时钟不一致时误判离线。
+	const lastSeenAgo =
+		typeof node.last_seen_ago === "number" &&
+		Number.isFinite(node.last_seen_ago)
+			? Math.max(0, node.last_seen_ago)
+			: null;
+	const lastActiveMs =
+		lastSeenAgo !== null
+			? now - lastSeenAgo * 1000
+			: node.last_seen
+				? node.last_seen * 1000
+				: null;
 
 	return {
 		id: node.id,
 		name: node.name,
 		public_note: node.public_remark ?? "",
-		last_active: node.last_seen
-			? new Date(node.last_seen * 1000).toISOString()
-			: OFFLINE_EPOCH,
+		last_active:
+			lastActiveMs !== null
+				? new Date(lastActiveMs).toISOString()
+				: OFFLINE_EPOCH,
 		country_code: (node.country ?? "").toLowerCase(),
 		host: {
 			platform: node.os ?? "",
@@ -170,7 +184,9 @@ export function mapNode(node: MonitorNode): NezhaServer {
 			arch: node.arch ?? "",
 			// monitor 无 boot_time，用 最后上报 - 运行时长 反推（秒）
 			boot_time:
-				node.last_seen && m.uptime ? node.last_seen - toNumber(m.uptime) : 0,
+				lastActiveMs !== null && m.uptime
+					? Math.floor(lastActiveMs / 1000) - toNumber(m.uptime)
+					: 0,
 			version: node.agent_version ?? "",
 		},
 		state: {
@@ -214,22 +230,31 @@ export function mapNode(node: MonitorNode): NezhaServer {
 	};
 }
 
-export function mapNodes(nodes: MonitorNode[]): NezhaServer[] {
-	return nodes.map(mapNode);
+export function mapNodes(nodes: MonitorNode[], now?: number): NezhaServer[] {
+	return nodes.map((node) => mapNode(node, now));
 }
 
-/** monitor /api/ws 的帧 → NezhaWebsocketResponse */
-export function mapWsFrame(raw: unknown): NezhaWebsocketResponse {
-	const data = (raw ?? {}) as MonitorNodesResponse;
-	const nodes = Array.isArray(data.nodes) ? data.nodes : [];
-	const servers = mapNodes(nodes);
+function buildWsFrame(nodes: MonitorNode[]): NezhaWebsocketResponse {
 	const now = Date.now();
+	const servers = mapNodes(nodes, now);
 	const online = servers.filter((server) => {
 		const last = Date.parse(server.last_active);
 		return Number.isFinite(last) && last > 0 && now - last <= 30000;
 	}).length;
 
 	return { now, online, servers };
+}
+
+/** monitor /api/ws 的帧 → NezhaWebsocketResponse */
+export function mapWsFrame(raw: unknown): NezhaWebsocketResponse {
+	const data = (raw ?? {}) as MonitorNodesResponse;
+	const nodes = Array.isArray(data.nodes) ? data.nodes : [];
+	return buildWsFrame(nodes);
+}
+
+/** 轮询兜底：WebSocket 连不上（例如匿名连接满 1000 条回 503）时取一次快照 */
+export async function fetchNodesSnapshot(): Promise<NezhaWebsocketResponse> {
+	return buildWsFrame(await fetchNodesRaw());
 }
 
 export const fetchMe = async (): Promise<MonitorMe> => {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getSession } from "@/lib/safe-storage";
 
 declare global {
 	interface Window {
@@ -32,7 +33,7 @@ export function useBackground() {
 			if (window.CustomBackgroundImage) {
 				setBackgroundImage(window.CustomBackgroundImage);
 			} else {
-				const savedImage = sessionStorage.getItem("savedBackgroundImage");
+				const savedImage = getSession("savedBackgroundImage");
 				if (savedImage) {
 					window.CustomBackgroundImage = savedImage;
 					setBackgroundImage(savedImage);
@@ -42,10 +43,7 @@ export function useBackground() {
 
 		// 设置一个轮询来检查初始背景
 		const intervalId = setInterval(() => {
-			if (
-				window.CustomBackgroundImage ||
-				sessionStorage.getItem("savedBackgroundImage")
-			) {
+			if (window.CustomBackgroundImage || getSession("savedBackgroundImage")) {
 				checkInitialBackground();
 				clearInterval(intervalId);
 			}

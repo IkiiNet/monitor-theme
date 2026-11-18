@@ -10,6 +10,7 @@ import { useBackground } from "@/hooks/use-background";
 import { useThemeConfig } from "@/hooks/use-theme-config";
 import { useWebSocketContext } from "@/hooks/use-websocket-context";
 import { fetchLoginUser, fetchSetting } from "@/lib/nezha-api";
+import { getSession, removeSession, setSession } from "@/lib/safe-storage";
 import { cn } from "@/lib/utils";
 
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -80,14 +81,11 @@ function Header() {
 	const handleBackgroundToggle = () => {
 		if (window.CustomBackgroundImage) {
 			// Store the current background image before removing it
-			sessionStorage.setItem(
-				"savedBackgroundImage",
-				window.CustomBackgroundImage,
-			);
+			setSession("savedBackgroundImage", window.CustomBackgroundImage);
 			updateBackground(undefined);
 		} else {
 			// Restore the saved background image
-			const savedImage = sessionStorage.getItem("savedBackgroundImage");
+			const savedImage = getSession("savedBackgroundImage");
 			if (savedImage) {
 				updateBackground(savedImage);
 			}
@@ -101,7 +99,7 @@ function Header() {
 			<section className="flex items-center justify-between header-top">
 				<section
 					onClick={() => {
-						sessionStorage.removeItem("selectedGroup");
+						removeSession("selectedGroup");
 						navigate("/");
 					}}
 					className="cursor-pointer flex items-center sm:text-base text-sm font-medium"
@@ -137,8 +135,7 @@ function Header() {
 					</div>
 					<LanguageSwitcher />
 					<ModeToggle />
-					{(customBackgroundImage ||
-						sessionStorage.getItem("savedBackgroundImage")) && (
+					{(customBackgroundImage || getSession("savedBackgroundImage")) && (
 						<Button
 							variant="outline"
 							size="sm"
@@ -226,7 +223,7 @@ export function RefreshToast() {
 	}
 
 	if (needReconnect) {
-		sessionStorage.removeItem("needRefresh");
+		removeSession("needRefresh");
 		setTimeout(() => {
 			navigate(0);
 		}, 1000);

@@ -1,3 +1,5 @@
+import { setSession } from "@/lib/safe-storage";
+
 export function saveMainPageScrollPosition() {
 	const scrollPosition =
 		window.scrollY ||
@@ -5,6 +7,6 @@ export function saveMainPageScrollPosition() {
 		document.body.scrollTop ||
 		0;
 
-	sessionStorage.setItem("fromMainPage", "true");
-	sessionStorage.setItem("scrollPosition", String(scrollPosition));
+	setSession("fromMainPage", "true");
+	setSession("scrollPosition", String(scrollPosition));
 }

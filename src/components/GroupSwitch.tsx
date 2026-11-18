@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useActiveIndicator } from "@/hooks/use-active-indicator";
+import { getSession } from "@/lib/safe-storage";
 import { cn } from "@/lib/utils";
 
 export default function GroupSwitch({
@@ -51,7 +52,7 @@ export default function GroupSwitch({
 			setCurrentTab("All");
 			return;
 		}
-		const savedGroup = sessionStorage.getItem("selectedGroup");
+		const savedGroup = getSession("selectedGroup");
 		if (savedGroup && tabs.includes(savedGroup)) {
 			setCurrentTab(savedGroup);
 		}

@@ -1,4 +1,10 @@
-import { act, render, renderHook, screen } from "@testing-library/react";
+import {
+	act,
+	render,
+	renderHook,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -258,11 +264,22 @@ describe("WebSocketProvider", () => {
 		});
 	}
 
+	function jsonResponse(body: unknown) {
+		return new Response(JSON.stringify(body), {
+			status: 200,
+			headers: { "Content-Type": "application/json" },
+		});
+	}
+
 	it("connects with a ws URL and records incoming messages", () => {
 		renderWebSocketProvider(<WebSocketProbe />);
 
 		const socket = FakeWebSocket.instances[0];
-		expect(socket.url).toBe("wss://localhost/api/v1/ws/server");
+		expect(socket.url).toBe(
+			typeof DecompressionStream === "undefined"
+				? "wss://localhost/api/v1/ws/server"
+				: "wss://localhost/api/v1/ws/server?gzip",
+		);
 
 		act(() => {
 			socket.open();
@@ -276,6 +293,37 @@ describe("WebSocketProvider", () => {
 
 		expect(screen.getByText("second")).toBeInTheDocument();
 		expect(screen.getByTestId("message-count")).toHaveTextContent("2");
+	});
+
+	it("falls back to polling /api/nodes when the socket closes", async () => {
+		const fetchMock = vi.fn(async () =>
+			jsonResponse({
+				nodes: [
+					{
+						id: 2,
+						name: "polled",
+						last_seen: Math.floor(Date.now() / 1000),
+					},
+				],
+			}),
+		);
+		vi.stubGlobal("fetch", fetchMock);
+
+		renderWebSocketProvider(<WebSocketProbe />);
+		const socket = FakeWebSocket.instances[0];
+
+		act(() => {
+			socket.open();
+			socket.close();
+		});
+
+		await waitFor(() => {
+			expect(screen.getByText("polled")).toBeInTheDocument();
+		});
+		expect(fetchMock).toHaveBeenCalledWith("/api/nodes", {
+			credentials: "same-origin",
+			cache: "no-store",
+		});
 	});
 
 	it("normalizes missing and non-array server collections", () => {
