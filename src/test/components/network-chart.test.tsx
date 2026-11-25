@@ -205,6 +205,52 @@ describe("NetworkChart", () => {
 			expect(apiMocks.fetchMonitor).toHaveBeenCalledWith(7, "7d");
 		});
 	});
+
+	it("draws delay lines in display_index order, not task id order", async () => {
+		const ordered: NezhaMonitor[] = [
+			{
+				monitor_id: 9,
+				monitor_name: "Third",
+				display_index: 2,
+				server_id: 7,
+				server_name: "edge-chart",
+				created_at: times,
+				avg_delay: times.map(() => 90),
+			},
+			{
+				monitor_id: 3,
+				monitor_name: "First",
+				display_index: 0,
+				server_id: 7,
+				server_name: "edge-chart",
+				created_at: times,
+				avg_delay: times.map(() => 10),
+			},
+			{
+				monitor_id: 5,
+				monitor_name: "Second",
+				display_index: 1,
+				server_id: 7,
+				server_name: "edge-chart",
+				created_at: times,
+				avg_delay: times.map(() => 50),
+			},
+		];
+		apiMocks.fetchLoginUser.mockResolvedValue(loginResponse());
+		apiMocks.fetchMonitor.mockResolvedValue({
+			success: true,
+			data: ordered,
+		});
+
+		renderWithQuery(<NetworkChart server_id={7} show={true} />);
+
+		expect(await screen.findByText("edge-chart")).toBeInTheDocument();
+		expect(
+			screen
+				.getAllByTestId("line")
+				.map((node) => node.getAttribute("data-key")),
+		).toEqual(["First", "Second", "Third"]);
+	});
 });
 
 describe("NetworkChartClient", () => {

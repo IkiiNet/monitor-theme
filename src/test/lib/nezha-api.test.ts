@@ -80,6 +80,29 @@ describe("nezha api fetchers", () => {
 		);
 	});
 
+	it("orders monitor series by ping row order from the hub", async () => {
+		vi.mocked(fetch).mockResolvedValueOnce(
+			jsonResponse({
+				ping: [
+					{ task_id: 4, latency: 10, ts: 1 },
+					{ task_id: 3, latency: 20, ts: 1 },
+					{ task_id: 3, latency: 21, ts: 2 },
+					{ task_id: 1, latency: 30, ts: 2 },
+				],
+				probes: { "1": "Telecom", "3": "Mobile", "4": "Edu" },
+			}),
+		);
+
+		const result = await fetchMonitor(7, "1d");
+
+		expect(result.data?.map((item) => item.monitor_name)).toEqual([
+			"Edu",
+			"Mobile",
+			"Telecom",
+		]);
+		expect(result.data?.map((item) => item.display_index)).toEqual([0, 1, 2]);
+	});
+
 	it("loads the login user from /api/me and rejects anonymous sessions", async () => {
 		vi.mocked(fetch).mockResolvedValueOnce(jsonResponse({ authed: false }));
 

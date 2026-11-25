@@ -163,7 +163,7 @@ export function NetworkChart({
 		if (!aInfo) return 1;
 		if (!bInfo) return -1;
 
-		const indexDiff = (bInfo.displayIndex ?? 0) - (aInfo.displayIndex ?? 0);
+		const indexDiff = (aInfo.displayIndex ?? 0) - (bInfo.displayIndex ?? 0);
 		if (indexDiff !== 0) return indexDiff;
 
 		return aInfo.id - bInfo.id;

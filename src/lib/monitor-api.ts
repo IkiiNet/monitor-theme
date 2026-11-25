@@ -453,7 +453,9 @@ export const fetchMonitor = async (
 			entry = {
 				monitor_id: taskId,
 				monitor_name: probes[String(taskId)] ?? `探测 ${taskId}`,
-				display_index: taskId,
+				// hub 按 ping_task.sort 的顺序返回 ping 行，首次出现的先后
+				// 就是后台拖拽后的顺序；不能再用 taskId 充当排序值。
+				display_index: byTask.size,
 				server_id: serverId,
 				server_name: "",
 				created_at: [],
